@@ -3,11 +3,13 @@ import React, { useState } from "react";
 interface FloorPlanSelectorProps {
   selectedAreaId: number | null;
   onAreaSelect: (areaId: number) => void;
+  currentRentalAreaId?: number | null;
 }
 
 const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
   selectedAreaId,
   onAreaSelect,
+  currentRentalAreaId,
 }) => {
   const [hoveredArea, setHoveredArea] = useState<number | null>(null);
 
@@ -16,17 +18,22 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
   };
 
   const getAreaFill = (areaId: number): string => {
+    if (areaId === currentRentalAreaId) return "#16a34a";
     if (selectedAreaId === areaId) return "#1E40AF";
     if (hoveredArea === areaId) return "#60a5fa";
     return "#C0C0C0";
   };
 
   const getAreaStroke = (areaId: number): string => {
-    return selectedAreaId === areaId ? "#16a34a" : "#0369a1";
+    return selectedAreaId === areaId || areaId === currentRentalAreaId
+      ? "#16a34a"
+      : "#0369a1";
   };
 
   const getStrokeWidth = (areaId: number): string => {
-    return selectedAreaId === areaId ? "4" : "2";
+    return selectedAreaId === areaId || areaId === currentRentalAreaId
+      ? "4"
+      : "2";
   };
 
   return (
@@ -232,8 +239,7 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
             <path
               d="M2991 722H2380.38L2315 617L2315 722H2315V383H2991V722Z"
               fill={getAreaFill(7)}
-              stroke={getAreaStroke(7)}
-              strokeWidth={getStrokeWidth(7)}
+              stroke="none"
             />
             <text
               x="2653"
@@ -257,6 +263,18 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
             stroke="#605959"
             strokeWidth="3"
           />
+
+          {/* Thêm chữ "Vị Trí Trung Tâm" */}
+          <text
+            x="1514"
+            y="920"
+            fill="#605959"
+            fontSize="100"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
+            Vị Trí Trung Tâm
+          </text>
 
           {/* Group 19 - A-9 */}
           <g
@@ -293,8 +311,7 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
             <path
               d="M2315 1210L2381 1104H2992V1602H2315V1104H2315L2315 1210Z"
               fill={getAreaFill(10)}
-              stroke={getAreaStroke(10)}
-              strokeWidth={getStrokeWidth(10)}
+              stroke="none"
             />
             <text
               x="2653"
@@ -308,7 +325,6 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* Restrooms (non-interactive) */}
           <rect
             x="903.5"
             y="818.5"
@@ -341,11 +357,21 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
           <ellipse cx="2067.5" cy="864" rx="9.5" ry="10" fill="#605959" />
           <ellipse cx="2067.5" cy="902.5" rx="9.5" ry="22.5" fill="#605959" />
 
-          {/* Bottom triangle (non-interactive) */}
           <path
             d="M1543.5 1513L1584.64 1579.75H1502.36L1543.5 1513Z"
             fill="#605959"
           />
+
+          <text
+            x="1543.5"
+            y="1450"
+            fill="#605959"
+            fontSize="100"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
+            Lối Vào
+          </text>
         </svg>
 
         {/* Legend */}

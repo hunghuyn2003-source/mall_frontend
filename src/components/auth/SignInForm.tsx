@@ -47,15 +47,6 @@ export default function SignInForm() {
     <div className="flex w-full flex-1 flex-col lg:w-1/2">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
         <div>
-          <div className="mb-5 sm:mb-8">
-            <h1 className="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">
-              Sign In
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email, password and role to sign in!
-            </p>
-          </div>
-
           <div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <TextField
@@ -75,7 +66,7 @@ export default function SignInForm() {
               />
 
               <FormControl fullWidth required>
-                <InputLabel id="role-label">Role</InputLabel>
+                <InputLabel id="role-label">Vai trò</InputLabel>
                 <Select
                   labelId="role-label"
                   value={role}

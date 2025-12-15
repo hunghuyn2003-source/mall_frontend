@@ -13,12 +13,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { Modal } from "../ui/modal";
+import { Modal } from "@/components/ui/modal";
 import CreateOwnerModal from "./CreateOwnerModal";
 import Floor1Select from "./Floor1Select";
 import Floor2Select from "./Floor2Select";
-import ComponentCard from "../common/ComponentCard";
-import { ROLE_LABEL } from "@/helper/RoleLabel";
+import ComponentCard from "@/components/common/ComponentCard";
+import { ROLE_LABEL } from "@/helper/Label";
 import { MenuItem } from "@mui/material";
 
 interface Props {
@@ -255,7 +255,6 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                                   {owner.phone || "—"}
                                 </td>
 
-                                {/* Role (việt hoá) */}
                                 <td className="px-4 py-3 font-medium">
                                   {ROLE_LABEL[owner.role] || owner.role}
                                 </td>

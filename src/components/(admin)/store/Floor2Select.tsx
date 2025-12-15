@@ -3,11 +3,13 @@ import React, { useState } from "react";
 interface FloorPlanSelectorProps {
   selectedAreaId: number | null;
   onAreaSelect: (areaId: number) => void;
+  currentRentalAreaId?: number | null;
 }
 
 const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
   selectedAreaId,
   onAreaSelect,
+  currentRentalAreaId,
 }) => {
   const [hoveredArea, setHoveredArea] = useState<number | null>(null);
 
@@ -16,17 +18,22 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
   };
 
   const getAreaFill = (areaId: number): string => {
-    if (selectedAreaId === areaId) return "#1E40AF";
+    if (areaId === currentRentalAreaId) return "#16a34a"; // green for current rental
+    if (selectedAreaId === areaId) return "#1E40AF"; // blue for selected
     if (hoveredArea === areaId) return "#60a5fa";
     return "#C0C0C0";
   };
 
   const getAreaStroke = (areaId: number): string => {
-    return selectedAreaId === areaId ? "#16a34a" : "#0369a1";
+    return selectedAreaId === areaId || areaId === currentRentalAreaId
+      ? "#16a34a"
+      : "#0369a1";
   };
 
   const getStrokeWidth = (areaId: number): string => {
-    return selectedAreaId === areaId ? "4" : "2";
+    return selectedAreaId === areaId || areaId === currentRentalAreaId
+      ? "4"
+      : "2";
   };
 
   return (
@@ -39,21 +46,21 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
         >
           <rect width="2349" height="1516" fill="white" />
 
-          {/* B-5 */}
+          {/* B-5 (ID: 15 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(5)}
+            onMouseEnter={() => setHoveredArea(15)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(5)}
+            onClick={() => handleAreaClick(15)}
           >
             <rect
               x="1499"
               width="149.51"
               height="324"
               transform="rotate(90 1499 0)"
-              fill={getAreaFill(5)}
-              stroke={getAreaStroke(5)}
-              strokeWidth={getStrokeWidth(5)}
+              fill={getAreaFill(15)}
+              stroke={getAreaStroke(15)}
+              strokeWidth={getStrokeWidth(15)}
             />
             <text
               x="1681"
@@ -67,12 +74,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-15 */}
+          {/* B-15 (ID: 25 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(15)}
+            onMouseEnter={() => setHoveredArea(25)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(15)}
+            onClick={() => handleAreaClick(25)}
           >
             <rect
               x="1119"
@@ -80,9 +87,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="147"
               height="619"
               transform="rotate(90 1119 675)"
-              fill={getAreaFill(15)}
-              stroke={getAreaStroke(15)}
-              strokeWidth={getStrokeWidth(15)}
+              fill={getAreaFill(25)}
+              stroke={getAreaStroke(25)}
+              strokeWidth={getStrokeWidth(25)}
             />
             <text
               x="809"
@@ -96,12 +103,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-17 */}
+          {/* B-17 (ID: 27 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(17)}
+            onMouseEnter={() => setHoveredArea(27)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(17)}
+            onClick={() => handleAreaClick(27)}
           >
             <rect
               x="1119"
@@ -109,9 +116,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="252"
               height="505"
               transform="rotate(90 1119 952)"
-              fill={getAreaFill(17)}
-              stroke={getAreaStroke(17)}
-              strokeWidth={getStrokeWidth(17)}
+              fill={getAreaFill(27)}
+              stroke={getAreaStroke(27)}
+              strokeWidth={getStrokeWidth(27)}
             />
             <text
               x="867"
@@ -125,12 +132,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-16 */}
+          {/* B-16 (ID: 26 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(16)}
+            onMouseEnter={() => setHoveredArea(26)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(16)}
+            onClick={() => handleAreaClick(26)}
           >
             <rect
               x="593"
@@ -138,9 +145,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="252"
               height="593"
               transform="rotate(90 593 952)"
-              fill={getAreaFill(16)}
-              stroke={getAreaStroke(16)}
-              strokeWidth={getStrokeWidth(16)}
+              fill={getAreaFill(26)}
+              stroke={getAreaStroke(26)}
+              strokeWidth={getStrokeWidth(26)}
             />
             <text
               x="300"
@@ -154,12 +161,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-2 */}
+          {/* B-2 (ID: 12 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(2)}
+            onMouseEnter={() => setHoveredArea(12)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(2)}
+            onClick={() => handleAreaClick(12)}
           >
             <rect
               x="372"
@@ -167,9 +174,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="127"
               height="382"
               transform="rotate(90 372 157)"
-              fill={getAreaFill(2)}
-              stroke={getAreaStroke(2)}
-              strokeWidth={getStrokeWidth(2)}
+              fill={getAreaFill(12)}
+              stroke={getAreaStroke(12)}
+              strokeWidth={getStrokeWidth(12)}
             />
             <text
               x="181"
@@ -183,21 +190,21 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-1 */}
+          {/* B-1 (ID: 11 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(5)}
+            onMouseEnter={() => setHoveredArea(11)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(5)}
+            onClick={() => handleAreaClick(11)}
           >
             <rect
               x="1499"
               width="149.51"
               height="324"
               transform="rotate(90 1499 0)"
-              fill={getAreaFill(5)}
-              stroke={getAreaStroke(5)}
-              strokeWidth={getStrokeWidth(5)}
+              fill={getAreaFill(11)}
+              stroke={getAreaStroke(11)}
+              strokeWidth={getStrokeWidth(11)}
             />
             <text
               x="1330"
@@ -207,16 +214,16 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-5
+              B-1
             </text>
           </g>
 
-          {/* B-4 */}
+          {/* B-4 (ID: 14 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(4)}
+            onMouseEnter={() => setHoveredArea(14)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(4)}
+            onClick={() => handleAreaClick(14)}
           >
             <rect
               x="377"
@@ -224,9 +231,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="127"
               height="382"
               transform="rotate(90 377 459)"
-              fill={getAreaFill(4)}
-              stroke={getAreaStroke(4)}
-              strokeWidth={getStrokeWidth(4)}
+              fill={getAreaFill(14)}
+              stroke={getAreaStroke(14)}
+              strokeWidth={getStrokeWidth(14)}
             />
             <text
               x="186"
@@ -240,12 +247,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-3 */}
+          {/* B-3 (ID: 13 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(3)}
+            onMouseEnter={() => setHoveredArea(13)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(3)}
+            onClick={() => handleAreaClick(13)}
           >
             <rect
               x="375"
@@ -253,9 +260,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="127"
               height="382"
               transform="rotate(90 375 302)"
-              fill={getAreaFill(3)}
-              stroke={getAreaStroke(3)}
-              strokeWidth={getStrokeWidth(3)}
+              fill={getAreaFill(13)}
+              stroke={getAreaStroke(13)}
+              strokeWidth={getStrokeWidth(13)}
             />
             <text
               x="184"
@@ -269,12 +276,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-11 */}
+          {/* B-11 (ID: 21 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(11)}
+            onMouseEnter={() => setHoveredArea(21)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(11)}
+            onClick={() => handleAreaClick(21)}
           >
             <rect
               x="1631"
@@ -282,9 +289,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="186"
               height="456"
               transform="rotate(90 1631 281)"
-              fill={getAreaFill(11)}
-              stroke={getAreaStroke(11)}
-              strokeWidth={getStrokeWidth(11)}
+              fill={getAreaFill(21)}
+              stroke={getAreaStroke(21)}
+              strokeWidth={getStrokeWidth(21)}
             />
             <text
               x="1403"
@@ -298,12 +305,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-12 */}
+          {/* B-12 (ID: 22 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(12)}
+            onMouseEnter={() => setHoveredArea(22)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(12)}
+            onClick={() => handleAreaClick(22)}
           >
             <rect
               x="1646"
@@ -311,9 +318,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="232"
               height="324"
               transform="rotate(90 1646 602)"
-              fill={getAreaFill(12)}
-              stroke={getAreaStroke(12)}
-              strokeWidth={getStrokeWidth(12)}
+              fill={getAreaFill(22)}
+              stroke={getAreaStroke(22)}
+              strokeWidth={getStrokeWidth(22)}
             />
             <text
               x="1480"
@@ -327,12 +334,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-14 */}
+          {/* B-14 (ID: 24 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(14)}
+            onMouseEnter={() => setHoveredArea(24)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(14)}
+            onClick={() => handleAreaClick(24)}
           >
             <rect
               x="1819.51"
@@ -340,9 +347,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="149.51"
               height="263"
               transform="rotate(-180 1819.51 1111)"
-              fill={getAreaFill(14)}
-              stroke={getAreaStroke(14)}
-              strokeWidth={getStrokeWidth(14)}
+              fill={getAreaFill(24)}
+              stroke={getAreaStroke(24)}
+              strokeWidth={getStrokeWidth(24)}
             />
             <text
               x="1745"
@@ -356,12 +363,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-13 */}
+          {/* B-13 (ID: 23 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(13)}
+            onMouseEnter={() => setHoveredArea(23)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(13)}
+            onClick={() => handleAreaClick(23)}
           >
             <rect
               x="1646"
@@ -369,9 +376,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="261"
               height="324"
               transform="rotate(90 1646 848)"
-              fill={getAreaFill(13)}
-              stroke={getAreaStroke(13)}
-              strokeWidth={getStrokeWidth(13)}
+              fill={getAreaFill(23)}
+              stroke={getAreaStroke(23)}
+              strokeWidth={getStrokeWidth(23)}
             />
             <text
               x="1480"
@@ -385,21 +392,21 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-6 */}
+          {/* B-6 (ID: 16 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(6)}
+            onMouseEnter={() => setHoveredArea(16)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(6)}
+            onClick={() => handleAreaClick(16)}
           >
             <rect
               x="1836"
               width="149.51"
               height="309"
               transform="rotate(90 1836 0)"
-              fill={getAreaFill(6)}
-              stroke={getAreaStroke(6)}
-              strokeWidth={getStrokeWidth(6)}
+              fill={getAreaFill(16)}
+              stroke={getAreaStroke(16)}
+              strokeWidth={getStrokeWidth(16)}
             />
             <text
               x="1681"
@@ -413,12 +420,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-7 */}
+          {/* B-7 (ID: 17 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(7)}
+            onMouseEnter={() => setHoveredArea(17)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(7)}
+            onClick={() => handleAreaClick(17)}
           >
             <rect
               x="2349"
@@ -426,9 +433,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="400"
               height="513"
               transform="rotate(90 2349 180)"
-              fill={getAreaFill(7)}
-              stroke={getAreaStroke(7)}
-              strokeWidth={getStrokeWidth(7)}
+              fill={getAreaFill(17)}
+              stroke={getAreaStroke(17)}
+              strokeWidth={getStrokeWidth(17)}
             />
             <text
               x="2093"
@@ -442,12 +449,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* A-4 */}
+          {/* A-4 (ID: 4 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(24)}
+            onMouseEnter={() => setHoveredArea(4)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(24)}
+            onClick={() => handleAreaClick(4)}
           >
             <rect
               x="2349"
@@ -455,9 +462,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="286"
               height="319"
               transform="rotate(90 2349 606)"
-              fill={getAreaFill(24)}
-              stroke={getAreaStroke(24)}
-              strokeWidth={getStrokeWidth(24)}
+              fill={getAreaFill(4)}
+              stroke={getAreaStroke(4)}
+              strokeWidth={getStrokeWidth(4)}
             />
             <text
               x="2206"
@@ -471,12 +478,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-8 */}
+          {/* B-8 (ID: 18 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(8)}
+            onMouseEnter={() => setHoveredArea(18)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(8)}
+            onClick={() => handleAreaClick(18)}
           >
             <rect
               x="2349"
@@ -484,9 +491,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="286"
               height="319"
               transform="rotate(90 2349 606)"
-              fill={getAreaFill(8)}
-              stroke={getAreaStroke(8)}
-              strokeWidth={getStrokeWidth(8)}
+              fill={getAreaFill(18)}
+              stroke={getAreaStroke(18)}
+              strokeWidth={getStrokeWidth(18)}
             />
             <text
               x="2206"
@@ -500,12 +507,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-9 */}
+          {/* B-9 (ID: 19 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(9)}
+            onMouseEnter={() => setHoveredArea(19)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(9)}
+            onClick={() => handleAreaClick(19)}
           >
             <rect
               x="2349"
@@ -513,9 +520,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="286"
               height="319"
               transform="rotate(90 2349 918)"
-              fill={getAreaFill(9)}
-              stroke={getAreaStroke(9)}
-              strokeWidth={getStrokeWidth(9)}
+              fill={getAreaFill(19)}
+              stroke={getAreaStroke(19)}
+              strokeWidth={getStrokeWidth(19)}
             />
             <text
               x="2206"
@@ -529,12 +536,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-10 */}
+          {/* B-10 (ID: 20 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(10)}
+            onMouseEnter={() => setHoveredArea(20)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(10)}
+            onClick={() => handleAreaClick(20)}
           >
             <rect
               x="2349"
@@ -542,9 +549,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="286"
               height="319"
               transform="rotate(90 2349 1230)"
-              fill={getAreaFill(10)}
-              stroke={getAreaStroke(10)}
-              strokeWidth={getStrokeWidth(10)}
+              fill={getAreaFill(20)}
+              stroke={getAreaStroke(20)}
+              strokeWidth={getStrokeWidth(20)}
             />
             <text
               x="2206"
@@ -558,12 +565,12 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* B-18 */}
+          {/* B-18 (ID: 28 trong DB) */}
           <g
             className="cursor-pointer transition-all duration-200"
-            onMouseEnter={() => setHoveredArea(18)}
+            onMouseEnter={() => setHoveredArea(28)}
             onMouseLeave={() => setHoveredArea(null)}
-            onClick={() => handleAreaClick(18)}
+            onClick={() => handleAreaClick(28)}
           >
             <rect
               x="1119"
@@ -571,9 +578,9 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               width="286"
               height="1124"
               transform="rotate(90 1119 1234)"
-              fill={getAreaFill(18)}
-              stroke={getAreaStroke(18)}
-              strokeWidth={getStrokeWidth(18)}
+              fill={getAreaFill(28)}
+              stroke={getAreaStroke(28)}
+              strokeWidth={getStrokeWidth(28)}
             />
             <text
               x="557"
@@ -616,6 +623,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           <ellipse cx="766.5" cy="329.5" rx="9.5" ry="22.5" fill="#605959" />
 
           {/* Restroom 2 (non-interactive) */}
+
           <rect
             x="13.5"
             y="673.5"
@@ -625,7 +633,17 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             fill="#313030"
             stroke="black"
           />
-
+          {/* Thêm chữ WC màu trắng */}
+          <text
+            x="82.5"
+            y="770"
+            fill="white"
+            fontSize="70"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
+            WC
+          </text>
           {/* Central circle (non-interactive) */}
           <ellipse
             cx="1545"

@@ -1,8 +1,18 @@
 import instance from "@/utils/axios";
 import { CreateUser, CreateOwner } from "@/type/user";
 
-export const listUser = async () => {
-  const res = await instance.get("/api/v1/users");
+export const listUser = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}) => {
+  const res = await instance.get("/api/v1/users", {
+    params: {
+      page: params?.page ?? 1,
+      limit: params?.limit ?? 10,
+      search: params?.search,
+    },
+  });
   return res.data;
 };
 

@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
-import CreateStoreModal from "@/components/store/CreateStoreModal";
+import CreateStoreModal from "@/components/(admin)/store/CreateStoreModal";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -46,7 +46,7 @@ const AppHeader: React.FC = () => {
     <>
       <header className="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b dark:border-gray-800 dark:bg-gray-900">
         <div className="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
-          <div className="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4 dark:border-gray-800">
+          <div className="flex w-full items-center justify-between gap-2 border-b border-gray-200 sm:gap-4 lg:justify-normal lg:border-b-0 dark:border-gray-800">
             <button
               className="z-99999 h-10 w-10 items-center justify-center rounded-lg border-gray-200 text-gray-500 lg:flex lg:h-11 lg:w-11 lg:border dark:border-gray-800 dark:text-gray-400"
               onClick={handleToggle}
@@ -123,39 +123,15 @@ const AppHeader: React.FC = () => {
               </svg>
             </button>
 
-            <div className="hidden lg:block">
-              <form>
-                <div className="relative">
-                  <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2">
-                    <svg
-                      className="fill-gray-500 dark:fill-gray-400"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M3.04175 9.37363C3.04175 5.87693 5.87711 3.04199 9.37508 3.04199C12.8731 3.04199 15.7084 5.87693 15.7084 9.37363C15.7084 12.8703 12.8731 15.7053 9.37508 15.7053C5.87711 15.7053 3.04175 12.8703 3.04175 9.37363ZM9.37508 1.54199C5.04902 1.54199 1.54175 5.04817 1.54175 9.37363C1.54175 13.6991 5.04902 17.2053 9.37508 17.2053C11.2674 17.2053 13.003 16.5344 14.357 15.4176L17.177 18.238C17.4699 18.5309 17.9448 18.5309 18.2377 18.238C18.5306 17.9451 18.5306 17.4703 18.2377 17.1774L15.418 14.3573C16.5365 13.0033 17.2084 11.2669 17.2084 9.37363C17.2084 5.04817 13.7011 1.54199 9.37508 1.54199Z"
-                        fill=""
-                      />
-                    </svg>
-                  </span>
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Search or type command..."
-                    className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px] dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30"
-                  />
-
-                  <button className="absolute top-1/2 right-2.5 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
-                    <span> ⌘ </span>
-                    <span> K </span>
-                  </button>
-                </div>
-              </form>
+            <div>
+              <div className="flex w-full justify-end px-3 py-2">
+                <button
+                  onClick={() => setOpenCreateStore(true)}
+                  className="flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                  + &nbsp; Tạo cửa hàng
+                </button>
+              </div>
             </div>
           </div>
 
@@ -177,16 +153,7 @@ const AppHeader: React.FC = () => {
           </div>
         </div>
       </header>
-      <div className="flex w-full justify-center px-3 py-2 lg:justify-start">
-        <div className="flex w-full justify-end px-3 py-2">
-          <button
-            onClick={() => setOpenCreateStore(true)}
-            className="flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            + &nbsp; Tạo cửa hàng
-          </button>
-        </div>
-      </div>
+
       {openCreateStore && (
         <CreateStoreModal
           isOpen={openCreateStore}

@@ -57,12 +57,7 @@ export const Modal: React.FC<ModalProps> = ({
     rounded-3xl
     bg-white dark:bg-gray-900
 
-    w-[92%]
-    sm:w-[85%]
-    md:w-[80%]
-    lg:w-[65%]
-    xl:w-[50%]
-    max-w-[700px]
+    w-full
 
     max-h-[90vh]
     overflow-y-auto
