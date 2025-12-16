@@ -82,7 +82,8 @@ export default function ListRentalTable({ onEdit }: Props) {
                 {rentals.map((rental: any) => (
                   <tr
                     key={rental.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={() => onEdit(rental)} // nhấn row cũng gọi onEdit
                   >
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.code || "___"}
@@ -94,7 +95,7 @@ export default function ListRentalTable({ onEdit }: Props) {
                       {rental.owner?.name || "___"}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-                      {rental.area?.code || "___"}
+                      {`Tầng ${rental.area.floor.level} - ${rental.area?.code || "___"}`}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.startDate
@@ -111,8 +112,8 @@ export default function ListRentalTable({ onEdit }: Props) {
                     </td>
                     <td className="px-5 py-3">
                       <button
-                        onClick={() => {
-                          console.log("Edit clicked, rental:", rental);
+                        onClick={(e) => {
+                          e.stopPropagation(); // tránh trùng với onClick row
                           onEdit(rental);
                         }}
                         className="flex items-center gap-1 rounded bg-blue-600 px-1 py-1 text-xs text-white hover:bg-blue-700"

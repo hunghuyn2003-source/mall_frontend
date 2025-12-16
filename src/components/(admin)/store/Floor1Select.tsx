@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUsedAreasByFloor } from "@/api/location";
 
 interface FloorPlanSelectorProps {
   selectedAreaId: number | null;
@@ -13,21 +15,42 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
 }) => {
   const [hoveredArea, setHoveredArea] = useState<number | null>(null);
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["used-areas", 1],
+    queryFn: () => getUsedAreasByFloor(1),
+  });
+
+  const usedAreaIds = React.useMemo<number[]>(() => {
+    return data?.usedAreas?.map((a: { id: number }) => a.id) ?? [];
+  }, [data]);
+
   const handleAreaClick = (areaId: number) => {
+    if (usedAreaIds.includes(areaId)) return;
     onAreaSelect(areaId);
   };
 
   const getAreaFill = (areaId: number): string => {
-    if (areaId === currentRentalAreaId) return "#16a34a";
-    if (selectedAreaId === areaId) return "#1E40AF";
-    if (hoveredArea === areaId) return "#60a5fa";
-    return "#C0C0C0";
+    // Active / đang edit hợp đồng
+    if (areaId === currentRentalAreaId) return "#3B82F6"; // blue-500
+
+    // Đã có cửa hàng
+    if (usedAreaIds.includes(areaId)) return "#93C5FD"; // blue-300
+
+    // Đang chọn
+    if (selectedAreaId === areaId) return "#1E40AF"; // blue-500
+
+    // Hover
+    if (hoveredArea === areaId) return "#E5E4E2"; // blue-400 (mượt)
+
+    // Trống
+    return "#D1D5DB"; // gray-300
   };
 
   const getAreaStroke = (areaId: number): string => {
-    return selectedAreaId === areaId || areaId === currentRentalAreaId
-      ? "#16a34a"
-      : "#0369a1";
+    if (areaId === currentRentalAreaId) return "#2563EB"; // blue-600
+    if (usedAreaIds.includes(areaId)) return "#2563EB"; // blue-600
+    if (selectedAreaId === areaId) return "#2563EB"; // blue-600
+    return "#0369a1";
   };
 
   const getStrokeWidth = (areaId: number): string => {
@@ -374,27 +397,24 @@ const Floor1Select: React.FC<FloorPlanSelectorProps> = ({
           </text>
         </svg>
 
-        {/* Legend */}
         <div className="mt-4 flex gap-6 text-sm">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 bg-gray-300"></div>
+            <div className="h-6 w-6 bg-blue-500"></div>
             <span className="text-gray-700 dark:text-gray-300">
-              Vị trí trống
+              Vị trí hiện tại
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 bg-blue-500"></div>
+            <div className="h-6 w-6 bg-blue-400"></div>
             <span className="text-gray-700 dark:text-gray-300">
-              Đã có cửa hàng
+              Đã cho thuê
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             <div className="h-6 w-6 bg-blue-800"></div>
-            <span className="text-gray-700 dark:text-gray-300">
-              Vị trí đang chọn
-            </span>
+            <span className="text-gray-700 dark:text-gray-300">Đang chọn</span>
           </div>
         </div>
       </div>

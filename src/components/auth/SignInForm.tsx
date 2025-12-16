@@ -15,18 +15,39 @@ import {
   FormControl,
 } from "@mui/material";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/AuthSlide";
+import { setActiveStore } from "@/store/StoreSlice";
 
 export default function SignInForm() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState(""); // trạng thái role
+  const [role, setRole] = useState("");
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
+      const user = data.user;
+
       toast.success("Đăng nhập thành công");
-      router.push("/");
+
+      dispatch(setUser(user));
+
+      if (user.role === "ADMIN") {
+        router.push("/");
+        return;
+      }
+
+      if (!user.stores || user.stores.length === 0) {
+        toast.error("Tài khoản chưa được có cửa hàng");
+        return;
+      }
+
+      router.push("/dashboard");
     },
+
     onError: (err: any) => {
       toast.error(err.response.data.message || "Đăng nhập thất bại");
     },

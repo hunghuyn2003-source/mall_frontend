@@ -6,19 +6,30 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useProfile } from "@/hooks/useProfile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { logout } from "@/api/auth"; // import sẵn
+import { logout } from "@/api/auth";
+import { useDispatch } from "react-redux";
+import { persistor } from "@/store";
+import { clearUser } from "@/store/AuthSlide";
+import { clearActiveStore } from "@/store/StoreSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: user } = useProfile();
+
   const router = useRouter();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const logoutMutation = useMutation({
-    mutationFn: logout, // dùng hàm đã có
+    mutationFn: logout,
     onSuccess: () => {
-      queryClient.clear(); // xoá cache user
-      router.push("/signin"); // redirect
+      persistor.purge();
+      dispatch(clearUser());
+      dispatch(clearActiveStore());
+      queryClient.clear();
+      router.push("/signin");
     },
   });
 

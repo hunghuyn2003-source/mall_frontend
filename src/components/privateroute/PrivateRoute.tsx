@@ -2,8 +2,10 @@
 
 import { getProfile } from "@/api/auth";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/AuthSlide";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -14,28 +16,41 @@ export default function PrivateRoute({
   children,
   allowedRoles,
 }: PrivateRouteProps) {
+  const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
+  const redirectedRef = useRef(false);
 
   const {
     data: user,
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
     staleTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    enabled: pathname !== "/signin" && !redirectedRef.current,
   });
 
   useEffect(() => {
-    if (isError) {
-      router.replace("/signin");
-      return;
+    if (user) {
+      dispatch(setUser(user));
     }
 
-    if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-      router.replace("/");
+    if (
+      isError &&
+      (error as any)?.response?.status === 401 &&
+      !redirectedRef.current
+    ) {
+      redirectedRef.current = true;
+      router.replace("/signin");
     }
-  }, [isError, user, allowedRoles, router]);
+  }, [user, isError, error, dispatch, router]);
 
   if (isLoading) return null;
 

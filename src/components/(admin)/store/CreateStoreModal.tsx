@@ -69,6 +69,7 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
     mutationFn: (payload: CreateStore) => createStore(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["stores"] });
+      queryClient.invalidateQueries({ queryKey: ["rentals"] });
       toast.success("Tạo cửa hàng thành công!");
       onClose();
     },

@@ -41,7 +41,7 @@ type FormValues = {
 
 export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
   const queryClient = useQueryClient();
-  const [currentFloor, setCurrentFloor] = React.useState(1);
+  const [currentFloor, setCurrentFloor] = React.useState<number | null>(1);
   const [selectedAreaId, setSelectedAreaId] = React.useState<number | null>(
     null,
   );

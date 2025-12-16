@@ -1,8 +1,22 @@
 export interface TUser {
   id: number;
+  email: string;
   name: string;
-  role: string;
+  role: "ADMIN" | "STOREOWNER" | "STORESTAFF";
   avatar: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  stores: TUserStore[];
+}
+
+export interface TUserStore {
+  id: number;
+  name: string;
+  type: string;
+  avatar: string | null;
+  role: "OWNER" | "STAFF";
+  position: string | null;
 }
 
 export interface CreateUser {

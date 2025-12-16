@@ -23,7 +23,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    return Promise.reject(error); // ✅ GIỮ NGUYÊN ERROR
+    return Promise.reject(error);
   },
 );
 
