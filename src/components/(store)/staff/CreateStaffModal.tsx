@@ -1,0 +1,275 @@
+"use client";
+
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { createStaff } from "@/api/staff";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Modal } from "@/components/ui/modal";
+import { TextField, Button, MenuItem, Typography } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  storeId: number;
+}
+
+type FormValues = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone: string;
+  birth: Date | null;
+  gender: string;
+  address: string;
+};
+
+export default function CreateStaffModal({ isOpen, onClose, storeId }: Props) {
+  const queryClient = useQueryClient();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { control, handleSubmit, watch, reset } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
+      birth: null,
+      gender: "",
+      address: "",
+    },
+  });
+
+  const password = watch("password");
+
+  const mutation = useMutation({
+    mutationFn: (payload: any) =>
+      createStaff({
+        ...payload,
+        storeId,
+        role: "STORESTAFF",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staffs"] });
+      toast.success("Tạo nhân viên thành công!");
+      reset();
+      onClose();
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Có lỗi xảy ra khi tạo nhân viên");
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (values) => {
+    const payload = {
+      ...values,
+      birth: values.birth ? values.birth.toISOString() : "",
+    };
+    mutation.mutate(payload);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] p-6">
+      <Typography variant="h6" mb={2}>
+        Tạo tài khoản nhân viên
+      </Typography>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}
+      >
+        {/* Name */}
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: "Không được bỏ trống tên" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              label="Tên"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+            />
+          )}
+        />
+
+        {/* Email */}
+        <Controller
+          name="email"
+          control={control}
+          rules={{ required: "Không được bỏ trống email" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              label="Email"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+            />
+          )}
+        />
+
+        {/* Password */}
+        <Controller
+          name="password"
+          control={control}
+          rules={{ required: "Không được bỏ trống mật khẩu" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              type={showPassword ? "text" : "password"}
+              label="Mật khẩu"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((v) => !v)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+        />
+        <Controller
+          name="confirmPassword"
+          control={control}
+          rules={{
+            required: "Vui lòng xác nhận mật khẩu",
+            validate: (value) => value === password || "Mật khẩu không khớp",
+          }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              type={showConfirmPassword ? "text" : "password"}
+              label="Xác nhận mật khẩu"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+        />
+
+        {/* Phone */}
+        <Controller
+          name="phone"
+          control={control}
+          rules={{ required: "Không được bỏ trống số điện thoại" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              label="Số điện thoại"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+            />
+          )}
+        />
+
+        {/* Birth */}
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Controller
+            name="birth"
+            control={control}
+            rules={{ required: "Không được bỏ trống ngày sinh" }}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label="Ngày sinh"
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
+                slotProps={{
+                  popper: { sx: { zIndex: 9999999 } },
+                  textField: {
+                    error: !!fieldState.error,
+                    helperText: fieldState.error?.message,
+                    fullWidth: true,
+                  },
+                }}
+              />
+            )}
+          />
+        </LocalizationProvider>
+
+        {/* Gender */}
+        <Controller
+          name="gender"
+          control={control}
+          rules={{ required: "Vui lòng chọn giới tính" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              select
+              label="Giới tính"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              SelectProps={{
+                MenuProps: {
+                  sx: { zIndex: 999999 },
+                  PaperProps: { sx: { zIndex: 999999 } },
+                },
+              }}
+            >
+              <MenuItem value="">Chọn giới tính</MenuItem>
+              <MenuItem value="male">Nam</MenuItem>
+              <MenuItem value="female">Nữ</MenuItem>
+              <MenuItem value="other">Khác</MenuItem>
+            </TextField>
+          )}
+        />
+
+        {/* Address */}
+        <Controller
+          name="address"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} label="Địa chỉ (không bắt buộc)" fullWidth />
+          )}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{
+            gridColumn: "span 2",
+            backgroundColor: "#2563EB",
+            borderRadius: 2,
+            "&:hover": {
+              backgroundColor: "#3B82F6",
+            },
+          }}
+        >
+          Tạo
+        </Button>
+      </form>
+    </Modal>
+  );
+}

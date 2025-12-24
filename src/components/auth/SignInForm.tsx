@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/AuthSlide";
 import { setActiveStore } from "@/store/StoreSlice";
+import Image from "next/image";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -32,24 +33,36 @@ export default function SignInForm() {
       const user = data.user;
 
       toast.success("Đăng nhập thành công");
-
       dispatch(setUser(user));
 
-      if (user.role === "ADMIN") {
-        router.push("/");
+      if (
+        (user.role === "STOREOWNER" || user.role === "STORESTAFF") &&
+        (!user.stores || user.stores.length === 0)
+      ) {
+        toast.error("Tài khoản chưa được gán cửa hàng");
         return;
       }
 
-      if (!user.stores || user.stores.length === 0) {
-        toast.error("Tài khoản chưa được có cửa hàng");
-        return;
-      }
+      switch (user.role) {
+        case "ADMIN":
+          router.push("/");
+          break;
 
-      router.push("/dashboard");
+        case "STOREOWNER":
+          router.push("/store/dashboard");
+          break;
+
+        case "STORESTAFF":
+          router.push("/staff/sell");
+          break;
+
+        default:
+          router.push("/login");
+      }
     },
 
     onError: (err: any) => {
-      toast.error(err.response.data.message || "Đăng nhập thất bại");
+      toast.error(err?.response?.data?.message || "Đăng nhập thất bại");
     },
   });
 
@@ -69,6 +82,17 @@ export default function SignInForm() {
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
         <div>
           <div>
+            <div className="mb-4 flex justify-center">
+              <Image
+                src="/images/MallLogo.png"
+                alt="Mall Logo"
+                width={180}
+                height={60}
+                className="object-contain"
+                priority
+              />
+            </div>
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <TextField
                 name="email"

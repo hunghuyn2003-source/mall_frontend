@@ -8,11 +8,15 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
 import CreateStoreModal from "@/components/(admin)/store/CreateStoreModal";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { ROLE_LABEL } from "@/helper/Label";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const [openCreateStore, setOpenCreateStore] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -141,6 +145,13 @@ const AppHeader: React.FC = () => {
             } shadow-theme-md w-full items-center justify-between gap-4 px-5 py-4 lg:flex lg:justify-end lg:px-0 lg:shadow-none`}
           >
             <div className="2xsm:gap-3 flex items-center gap-2">
+              {/* Role Badge */}
+              {user && (
+                <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                  {ROLE_LABEL[user.role] || user.role}
+                </span>
+              )}
+
               {/* <!-- Dark Mode Toggler --> */}
               <ThemeToggleButton />
               {/* <!-- Dark Mode Toggler --> */}

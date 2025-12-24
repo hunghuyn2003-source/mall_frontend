@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { updateRental, getRental } from "@/api/rental";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAreasByFloor } from "@/api/location";
 import { Modal } from "@/components/ui/modal";
 import {
   TextField,
@@ -55,7 +56,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
     enabled: isOpen && !!rental?.id,
   });
 
-  const { control, handleSubmit, reset } = useForm<FormValues>({
+  const { control, handleSubmit, reset, setValue } = useForm<FormValues>({
     defaultValues: {
       startDate: "",
       endDate: "",
@@ -64,6 +65,33 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
       status: "",
     },
   });
+
+  // Get areas data for current floor
+  const { data: areasData } = useQuery({
+    queryKey: ["areas", currentFloor],
+    queryFn: () => getAreasByFloor(currentFloor || 1),
+    enabled: isOpen && currentFloor !== null,
+  });
+
+  // Create areasMap
+  const areasMap = useMemo<
+    Map<number, { code: string; price: number; acreage: number }>
+  >(() => {
+    const map = new Map<
+      number,
+      { code: string; price: number; acreage: number }
+    >();
+    areasData?.areas?.forEach(
+      (area: { id: number; code: string; price: number; acreage: number }) => {
+        map.set(area.id, {
+          code: area.code,
+          price: area.price,
+          acreage: area.acreage,
+        });
+      },
+    );
+    return map;
+  }, [areasData]);
 
   const mutation = useMutation({
     mutationFn: (payload: FormValues) => updateRental(rental.id, payload),
@@ -97,6 +125,27 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
       setSelectedAreaId(rentalDetail.area.id);
     }
   }, [rentalDetail, reset]);
+
+  // Auto-fill premisesFee when area is selected
+  React.useEffect(() => {
+    if (selectedAreaId !== null && selectedAreaId !== rentalDetail?.area?.id) {
+      const area = areasMap.get(selectedAreaId);
+      if (area) {
+        setValue("premisesFee", area.price);
+      }
+    }
+  }, [selectedAreaId, areasMap, setValue, rentalDetail?.area?.id]);
+
+  // Clear selected area and restore original premisesFee when modal closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      setSelectedAreaId(null);
+      // Restore original premisesFee from rentalDetail
+      if (rentalDetail?.premisesFee) {
+        setValue("premisesFee", rentalDetail.premisesFee);
+      }
+    }
+  }, [isOpen, rentalDetail, setValue]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px]">
@@ -216,6 +265,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                             field.onChange(value ? value.toISOString() : "")
                           }
                           slotProps={{
+                            popper: { sx: { zIndex: 9999999 } },
                             textField: {
                               fullWidth: true,
                               error: !!fieldState.error,
@@ -238,6 +288,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                             field.onChange(value ? value.toISOString() : "")
                           }
                           slotProps={{
+                            popper: { sx: { zIndex: 9999999 } },
                             textField: {
                               fullWidth: true,
                               error: !!fieldState.error,
@@ -254,15 +305,25 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                   <Controller
                     name="premisesFee"
                     control={control}
-                    rules={{ required: "Không được bỏ trống phí thuê", min: 1 }}
+                    rules={{
+                      required: "Không được bỏ trống phí thuê",
+                      min: { value: 1, message: "Phí thuê phải lớn hơn 0" },
+                    }}
                     render={({ field, fieldState }) => (
                       <TextField
-                        {...field}
                         label="Phí thuê mặt bằng"
-                        type="number"
                         fullWidth
                         error={!!fieldState.error}
                         helperText={fieldState.error?.message}
+                        value={
+                          field.value
+                            ? Number(field.value).toLocaleString("vi-VN")
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, "");
+                          field.onChange(raw === "" ? "" : Number(raw));
+                        }}
                       />
                     )}
                   />
@@ -271,17 +332,24 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                     name="serviceFee"
                     control={control}
                     rules={{
-                      required: "Không được bỏ trống phí dịch vụ",
-                      min: 0,
+                      required: "Không được bỏ trống phí thuê",
+                      min: { value: 1, message: "Phí thuê phải lớn hơn 0" },
                     }}
                     render={({ field, fieldState }) => (
                       <TextField
-                        {...field}
                         label="Phí dịch vụ"
-                        type="number"
                         fullWidth
                         error={!!fieldState.error}
                         helperText={fieldState.error?.message}
+                        value={
+                          field.value
+                            ? Number(field.value).toLocaleString("vi-VN")
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, "");
+                          field.onChange(raw === "" ? "" : Number(raw));
+                        }}
                       />
                     )}
                   />

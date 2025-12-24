@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { listOwner } from "@/api/user";
 import { createStore } from "@/api/store";
 import { CreateStore } from "@/type/store";
+import { getAreasByFloor } from "@/api/location";
+import { uploadImage } from "@/api/upload";
 import { User, Check } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -41,19 +43,24 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
   const [selectedArea, setSelectedArea] = useState<number | null>(null);
   const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
 
-  const { control, handleSubmit, watch, setValue } = useForm<CreateStore>({
-    defaultValues: {
-      ownerId: 0,
-      areaId: 0,
-      storeName: "",
-      storeType: "",
-      startDate: "",
-      endDate: "",
-      premisesFee: 0,
-      serviceFee: 0,
-      contractFile: "",
-    },
-  });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const { control, handleSubmit, watch, setValue, reset } =
+    useForm<CreateStore>({
+      defaultValues: {
+        ownerId: 0,
+        areaId: 0,
+        name: "",
+        type: "",
+        startDate: "",
+        endDate: "",
+        premisesFee: 0,
+        serviceFee: 0,
+        contractFile: "",
+      },
+    });
 
   const formData = watch();
 
@@ -65,6 +72,39 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
   const owners = owner?.data || [];
   const meta = owner?.meta;
 
+  // Get areas data for current floor
+  const { data: areasData } = useQuery({
+    queryKey: ["areas", currentFloor],
+    queryFn: () => getAreasByFloor(currentFloor),
+    enabled: step === 2, // Only fetch when on step 2
+  });
+
+  // Create areasMap
+  const areasMap = useMemo<
+    Map<number, { code: string; price: number; acreage: number }>
+  >(() => {
+    const map = new Map<
+      number,
+      { code: string; price: number; acreage: number }
+    >();
+    areasData?.areas?.forEach(
+      (area: { id: number; code: string; price: number; acreage: number }) => {
+        map.set(area.id, {
+          code: area.code,
+          price: area.price,
+          acreage: area.acreage,
+        });
+      },
+    );
+    return map;
+  }, [areasData]);
+
+  const uploadMutation = useMutation({
+    mutationFn: (file: File) => uploadImage(file, "stores"),
+    onSuccess: (res) => {
+      setAvatarUrl(res.url);
+    },
+  });
   const mutation = useMutation({
     mutationFn: (payload: CreateStore) => createStore(payload),
     onSuccess: () => {
@@ -72,6 +112,9 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
       queryClient.invalidateQueries({ queryKey: ["rentals"] });
       toast.success("Tạo cửa hàng thành công!");
       onClose();
+      reset();
+      setAvatarFile(null);
+      setAvatarPreview(null);
     },
     onError: (err: any) => {
       toast.error(err?.message || "Đã có lỗi xảy ra");
@@ -88,7 +131,7 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
     formData.startDate !== "" &&
     formData.endDate !== "" &&
     formData.premisesFee > 0;
-  const canSubmit = formData.storeName !== "" && formData.storeType !== "";
+  const canSubmit = formData.name !== "" && formData.type !== "";
 
   const handleNext = () => {
     if (step === 1 && canGoToStep2) setStep(2);
@@ -103,16 +146,37 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
     setCurrentFloor(floor);
   };
 
-  const onSubmit = (data: CreateStore) => {
+  const onSubmit = async (data: CreateStore) => {
     if (!canSubmit) return;
-    mutation.mutate(data);
+
+    try {
+      // Upload avatar first if exists
+      let avatarUrl = "";
+      if (avatarFile) {
+        const uploadResult = await uploadMutation.mutateAsync(avatarFile);
+        avatarUrl = uploadResult.url;
+      }
+
+      // Create store with avatar URL
+      mutation.mutate({
+        ...data,
+        avatar: avatarUrl,
+      } as any);
+    } catch (error) {
+      // Error already handled in uploadMutation
+    }
   };
 
   useEffect(() => {
     if (selectedArea !== null) {
       setValue("areaId", selectedArea);
+      // Auto-fill premisesFee with area price
+      const area = areasMap.get(selectedArea);
+      if (area) {
+        setValue("premisesFee", area.price);
+      }
     }
-  }, [selectedArea, setValue]);
+  }, [selectedArea, setValue, areasMap]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -121,6 +185,26 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
 
     return () => clearTimeout(timer);
   }, [search]);
+
+  // Clear selected area when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedArea(null);
+      setValue("areaId", 0);
+      setAvatarFile(null);
+      setAvatarPreview(null);
+    }
+  }, [isOpen, setValue]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+
+    uploadMutation.mutate(file);
+  };
 
   return (
     <>
@@ -350,10 +434,17 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                         rules={{ required: true, min: 1 }}
                         render={({ field }) => (
                           <TextField
-                            {...field}
                             label="Số tiền thuê"
-                            type="number"
                             fullWidth
+                            value={
+                              field.value
+                                ? Number(field.value).toLocaleString("vi-VN")
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/\D/g, "");
+                              field.onChange(raw === "" ? "" : Number(raw));
+                            }}
                           />
                         )}
                       />
@@ -364,10 +455,17 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                         rules={{ required: true, min: 1 }}
                         render={({ field }) => (
                           <TextField
-                            {...field}
                             label="Phí dịch vụ (tùy chọn)"
-                            type="number"
                             fullWidth
+                            value={
+                              field.value
+                                ? Number(field.value).toLocaleString("vi-VN")
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/\D/g, "");
+                              field.onChange(raw === "" ? "" : Number(raw));
+                            }}
                           />
                         )}
                       />
@@ -410,9 +508,34 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
             {/* STEP 3 */}
             {step === 3 && (
               <div className="space-y-4">
+                <div className="mb-4 flex flex-col items-center gap-3">
+                  <label className="cursor-pointer">
+                    {avatarPreview ? (
+                      <img
+                        src={avatarPreview}
+                        alt="Avatar preview"
+                        className="h-24 w-24 rounded-full border object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-blue-600 text-4xl font-semibold text-white">
+                        {formData.name?.charAt(0) || "?"}
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAvatarChange}
+                    />
+                  </label>
+                  <span className="text-sm text-gray-500">
+                    Bấm vào ảnh để thay đổi
+                  </span>
+                </div>
+
                 <div className="mb-4">
                   <Controller
-                    name="storeName"
+                    name="name"
                     control={control}
                     rules={{ required: true }}
                     render={({ field }) => (
@@ -422,7 +545,7 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                 </div>
 
                 <Controller
-                  name="storeType"
+                  name="type"
                   control={control}
                   rules={{ required: "Vui lòng chọn loại cửa hàng" }}
                   render={({ field, fieldState }) => (
@@ -491,14 +614,18 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
               ) : (
                 <button
                   type="submit"
-                  disabled={!canSubmit}
+                  disabled={
+                    !canSubmit || mutation.isPending || uploadMutation.isPending
+                  }
                   className={`rounded-lg px-4 py-2 text-white ${
-                    !canSubmit
+                    !canSubmit || mutation.isPending || uploadMutation.isPending
                       ? "cursor-not-allowed bg-gray-400"
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
-                  Hoàn tất
+                  {mutation.isPending || uploadMutation.isPending
+                    ? "Đang xử lý..."
+                    : "Hoàn tất"}
                 </button>
               )}
             </div>

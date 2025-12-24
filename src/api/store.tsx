@@ -24,3 +24,12 @@ export const updateStore = async (id: number, payload: any) => {
   const res = await instance.patch(`/api/v1/stores/${id}`, payload);
   return res.data;
 };
+
+export const findAllStoresWithActiveRental = async (floorId?: number) => {
+  const res = await instance.get("/api/v1/stores/rented", {
+    params: {
+      floorId: floorId,
+    },
+  });
+  return res.data;
+};

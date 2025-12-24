@@ -2,8 +2,8 @@ export interface CreateStore {
   ownerId: number;
   areaId: number;
 
-  storeName: string;
-  storeType: string;
+  name: string;
+  type: string;
 
   startDate: string;
   endDate: string;

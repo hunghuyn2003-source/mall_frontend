@@ -12,6 +12,7 @@ import {
   MessageSquare,
   Settings,
   Store,
+  MapPin,
 } from "lucide-react";
 
 type NavItem = {
@@ -28,6 +29,11 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
+    icon: <MapPin size={20} />,
+    name: "Mặt bằng",
+    path: "/location",
+  },
+  {
     icon: <Calendar size={20} />,
     name: "Hợp đồng",
     path: "/rental",
@@ -37,6 +43,7 @@ const navItems: NavItem[] = [
     name: "Cửa hàng",
     path: "/store",
   },
+
   {
     icon: <Users size={20} />,
     name: "Tài khoản",
@@ -254,7 +261,7 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`flex py-8 ${
+        className={`flex py-2 ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -262,18 +269,12 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <Image
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
+                src="/images/MallLogo.png"
+                alt="Mall Logo"
                 width={150}
                 height={40}
-              />
-              <Image
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
+                className="object-contain"
+                priority
               />
             </>
           ) : (

@@ -9,7 +9,7 @@ export type TActiveStore = {
 };
 
 interface StoreState {
-  activeStore: TActiveStore | null;
+  activeStore: TActiveStore | any;
 }
 
 const initialState: StoreState = {

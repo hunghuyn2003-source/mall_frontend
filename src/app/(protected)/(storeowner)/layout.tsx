@@ -20,7 +20,7 @@ export default function StoreLayout({
 
   if (!store) {
     return (
-      <PrivateRoute allowedRoles={["STOREOWNER", "STORESTAFF"]}>
+      <PrivateRoute allowedRoles={["STOREOWNER"]}>
         <SelectStorePage />
       </PrivateRoute>
     );
@@ -34,7 +34,7 @@ export default function StoreLayout({
 
   return (
     <div className="min-h-screen">
-      <PrivateRoute allowedRoles={["STOREOWNER", "STORESTAFF"]}>
+      <PrivateRoute allowedRoles={["STOREOWNER"]}>
         <AppTopSideBar />
         <div
           className={`mx-auto max-w-(--breakpoint-2xl) pt-5 ${mainContentMargin}`}

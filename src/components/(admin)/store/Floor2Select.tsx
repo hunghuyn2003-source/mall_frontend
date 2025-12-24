@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUsedAreasByFloor } from "@/api/location";
+import { getUsedAreasByFloor, getAreasByFloor } from "@/api/location";
 
 interface FloorPlanSelectorProps {
   selectedAreaId: number | null;
   onAreaSelect: (areaId: number) => void;
   currentRentalAreaId?: number | null;
+  showLegend?: boolean;
+  allowSelect?: boolean;
 }
 
 const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
   selectedAreaId,
   onAreaSelect,
   currentRentalAreaId,
+  showLegend = true,
+  allowSelect = true,
 }) => {
   const [hoveredArea, setHoveredArea] = useState<number | null>(null);
 
@@ -20,11 +24,36 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
     queryFn: () => getUsedAreasByFloor(2),
   });
 
+  const { data: areasData } = useQuery({
+    queryKey: ["areas", 2],
+    queryFn: () => getAreasByFloor(2),
+  });
+
   const usedAreaIds = React.useMemo<number[]>(() => {
     return data?.usedAreas?.map((a: { id: number }) => a.id) ?? [];
   }, [data]);
 
+  const areasMap = React.useMemo<
+    Map<number, { code: string; price: number; acreage: number }>
+  >(() => {
+    const map = new Map<
+      number,
+      { code: string; price: number; acreage: number }
+    >();
+    areasData?.areas?.forEach(
+      (area: { id: number; code: string; price: number; acreage: number }) => {
+        map.set(area.id, {
+          code: area.code,
+          price: area.price,
+          acreage: area.acreage,
+        });
+      },
+    );
+    return map;
+  }, [areasData]);
+
   const handleAreaClick = (areaId: number) => {
+    if (!allowSelect) return;
     onAreaSelect(areaId);
   };
 
@@ -70,7 +99,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
 
           {/* B-5 (ID: 15 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(15)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(15)}
@@ -86,19 +115,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1681"
-              y="180"
+              y="160"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-5
+              {areasMap.get(15)?.code ?? "B-5"}
             </text>
           </g>
 
           {/* B-15 (ID: 25 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(25)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(25)}
@@ -115,19 +144,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="809"
-              y="760"
+              y="770"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-15
+              {areasMap.get(25)?.code ?? "B-15"}
             </text>
           </g>
 
           {/* B-17 (ID: 27 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(27)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(27)}
@@ -144,19 +173,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="867"
-              y="1090"
+              y="1070"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-17
+              {areasMap.get(27)?.code ?? "B-17"}
             </text>
           </g>
 
           {/* B-16 (ID: 26 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(26)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(26)}
@@ -173,19 +202,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="300"
-              y="1090"
+              y="1070"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-16
+              {areasMap.get(26)?.code ?? "B-16"}
             </text>
           </g>
 
           {/* B-2 (ID: 12 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(12)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(12)}
@@ -202,19 +231,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="181"
-              y="240"
+              y="250"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-2
+              {areasMap.get(12)?.code ?? "B-2"}
             </text>
           </g>
 
           {/* B-1 (ID: 11 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(11)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(11)}
@@ -230,19 +259,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1330"
-              y="90"
+              y="100"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-1
+              {areasMap.get(11)?.code ?? "B-1"}
             </text>
           </g>
 
           {/* B-4 (ID: 14 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(14)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(14)}
@@ -259,19 +288,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="186"
-              y="540"
+              y="550"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-4
+              {areasMap.get(14)?.code ?? "B-4"}
             </text>
           </g>
 
           {/* B-3 (ID: 13 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(13)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(13)}
@@ -288,19 +317,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="184"
-              y="385"
+              y="395"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-3
+              {areasMap.get(13)?.code ?? "B-3"}
             </text>
           </g>
 
           {/* B-11 (ID: 21 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(21)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(21)}
@@ -317,19 +346,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1403"
-              y="375"
+              y="400"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-11
+              {areasMap.get(21)?.code ?? "B-11"}
             </text>
           </g>
 
           {/* B-12 (ID: 22 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(22)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(22)}
@@ -346,19 +375,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1480"
-              y="740"
+              y="720"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-12
+              {areasMap.get(22)?.code ?? "B-12"}
             </text>
           </g>
 
           {/* B-14 (ID: 24 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(24)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(24)}
@@ -377,17 +406,17 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               x="1745"
               y="1000"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-14
+              {areasMap.get(24)?.code ?? "B-14"}
             </text>
           </g>
 
           {/* B-13 (ID: 23 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(23)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(23)}
@@ -406,17 +435,17 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               x="1480"
               y="1000"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-13
+              {areasMap.get(23)?.code ?? "B-13"}
             </text>
           </g>
 
           {/* B-6 (ID: 16 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(16)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(16)}
@@ -432,19 +461,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1681"
-              y="90"
+              y="100"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-6
+              {areasMap.get(16)?.code ?? "B-6"}
             </text>
           </g>
 
           {/* B-7 (ID: 17 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(17)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(17)}
@@ -461,19 +490,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="2093"
-              y="360"
+              y="340"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-7
+              {areasMap.get(17)?.code ?? "B-7"}
             </text>
           </g>
 
           {/* A-4 (ID: 4 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(4)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(4)}
@@ -490,19 +519,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="2206"
-              y="715"
+              y="695"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              A-4
+              {areasMap.get(4)?.code ?? "A-4"}
             </text>
           </g>
 
           {/* B-8 (ID: 18 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(18)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(18)}
@@ -519,19 +548,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="2206"
-              y="715"
+              y="780"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-8
+              {areasMap.get(18)?.code ?? "B-8"}
             </text>
           </g>
 
           {/* B-9 (ID: 19 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(19)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(19)}
@@ -548,19 +577,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="2206"
-              y="1025"
+              y="1090"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-9
+              {areasMap.get(19)?.code ?? "B-9"}
             </text>
           </g>
 
           {/* B-10 (ID: 20 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(20)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(20)}
@@ -577,19 +606,19 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="2206"
-              y="1340"
+              y="1400"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-10
+              {areasMap.get(20)?.code ?? "B-10"}
             </text>
           </g>
 
           {/* B-18 (ID: 28 trong DB) */}
           <g
-            className="cursor-pointer transition-all duration-200"
+            className={`${allowSelect ? "cursor-pointer" : "cursor-default"} transition-all duration-200`}
             onMouseEnter={() => setHoveredArea(28)}
             onMouseLeave={() => setHoveredArea(null)}
             onClick={() => handleAreaClick(28)}
@@ -606,13 +635,13 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="557"
-              y="1370"
+              y="1350"
               fill="white"
-              fontSize="48"
+              fontSize="100"
               fontWeight="bold"
               textAnchor="middle"
             >
-              B-18
+              {areasMap.get(28)?.code ?? "B-18"}
             </text>
           </g>
 
@@ -695,26 +724,56 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           <ellipse cx="1536.5" cy="1329.5" rx="9.5" ry="22.5" fill="#605959" />
         </svg>
 
-        <div className="mt-4 flex gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 bg-blue-500"></div>
-            <span className="text-gray-700 dark:text-gray-300">
-              Vị trí hiện tại
-            </span>
-          </div>
+        {showLegend && (
+          <div className="mt-4 flex gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 bg-blue-500"></div>
+              <span className="text-gray-700 dark:text-gray-300">
+                Vị trí hiện tại
+              </span>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 bg-blue-400"></div>
-            <span className="text-gray-700 dark:text-gray-300">
-              Đã cho thuê
-            </span>
-          </div>
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 bg-blue-300"></div>
+              <span className="text-gray-700 dark:text-gray-300">
+                Cửa hàng đã có người thuê
+              </span>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 bg-blue-800"></div>
-            <span className="text-gray-700 dark:text-gray-300">Đang chọn</span>
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 bg-blue-800"></div>
+              <span className="text-gray-700 dark:text-gray-300">
+                Đang chọn
+              </span>
+            </div>
           </div>
-        </div>
+        )}
+
+        {selectedAreaId && areasMap.get(selectedAreaId) && (
+          <div className="mt-6 rounded-lg border border-gray-300 bg-white p-4 shadow-md">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Mã khu vực</p>
+                <p className="text-md font-normal text-gray-900">
+                  {areasMap.get(selectedAreaId)?.code}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Diện tích</p>
+                <p className="text-md font-normal text-gray-900">
+                  {areasMap.get(selectedAreaId)?.acreage} m²
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Giá thuê</p>
+                <p className="text-md font-normal text-gray-900">
+                  {areasMap.get(selectedAreaId)?.price.toLocaleString("vi-VN")}{" "}
+                  đ
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

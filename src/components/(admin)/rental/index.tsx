@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import ComponentCard from "../../../components/common/ComponentCard";
-import ListRentalTable from "../../../components/(admin)/rental/ListRentalTable";
-import UpdateRentalModal from "../../../components/(admin)/rental/UpdateRentalModal";
-import { useModal } from "../../../hooks/useModal";
+import ComponentCard from "@/components/common/ComponentCard";
+import ListRentalTable from "./ListRentalTable";
+import UpdateRentalModal from "./UpdateRentalModal";
+import { useModal } from "@/hooks/useModal";
 
 export default function Rental() {
   const { isOpen, openModal, closeModal } = useModal();

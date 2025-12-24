@@ -41,14 +41,14 @@ export default function ListRentalTable({ onEdit }: Props) {
             setPage(1);
             setSearch(e.target.value);
           }}
-          placeholder="Tìm theo mã"
+          placeholder="Tìm theo mã hợp đồng, tên cửa hàng..."
           className="text-md w-[300px] rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500"
         />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
         <div className="max-w-full overflow-x-auto">
-          <div className="min-w-[600px]">
+          <div className="min-w-[800px]">
             <table className="w-full">
               <thead className="border-b border-gray-100 dark:border-white/5">
                 <tr>
@@ -56,19 +56,10 @@ export default function ListRentalTable({ onEdit }: Props) {
                     Mã hợp đồng
                   </th>
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
-                    Tên cửa hàng
+                    Cửa hàng
                   </th>
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Chủ sở hữu
-                  </th>
-                  <th className="px-5 py-3 text-start font-medium text-gray-500">
-                    Mặt bằng
-                  </th>
-                  <th className="px-5 py-3 text-start font-medium text-gray-500">
-                    Ngày bắt đầu
-                  </th>
-                  <th className="px-5 py-3 text-start font-medium text-gray-500">
-                    Ngày kết thúc
                   </th>
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Trạng thái
@@ -83,7 +74,7 @@ export default function ListRentalTable({ onEdit }: Props) {
                   <tr
                     key={rental.id}
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                    onClick={() => onEdit(rental)} // nhấn row cũng gọi onEdit
+                    onClick={() => onEdit(rental)}
                   >
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.code || "___"}
@@ -95,25 +86,14 @@ export default function ListRentalTable({ onEdit }: Props) {
                       {rental.owner?.name || "___"}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-                      {`Tầng ${rental.area.floor.level} - ${rental.area?.code || "___"}`}
-                    </td>
-                    <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-                      {rental.startDate
-                        ? new Date(rental.startDate).toLocaleDateString()
-                        : "___"}
-                    </td>
-                    <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-                      {rental.endDate
-                        ? new Date(rental.endDate).toLocaleDateString()
-                        : "___"}
-                    </td>
-                    <td className="text-md px-4 py-3 text-gray-800 dark:text-white">
-                      {RENTAL_STATUS_LABEL[rental.status] || "_"}
+                      {RENTAL_STATUS_LABEL[rental.status] ||
+                        rental.status ||
+                        "___"}
                     </td>
                     <td className="px-5 py-3">
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // tránh trùng với onClick row
+                          e.stopPropagation();
                           onEdit(rental);
                         }}
                         className="flex items-center gap-1 rounded bg-blue-600 px-1 py-1 text-xs text-white hover:bg-blue-700"

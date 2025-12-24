@@ -19,3 +19,9 @@ export const STORE_TYPE_LABEL: Record<string, string> = {
   supermarket: "Khu vui chơi",
   other: "Khác",
 };
+
+export const GENDER_LABEL: Record<string, string> = {
+  male: "Nam",
+  female: "Nữ",
+  other: "Khác",
+};

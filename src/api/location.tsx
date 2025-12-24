@@ -16,3 +16,8 @@ export const getUsedAreasByFloor = async (floorId: number) => {
   );
   return res.data;
 };
+
+export const updateArea = async (id: number, payload: any) => {
+  const res = await instance.patch(`/api/v1/location/areas/${id}`, payload);
+  return res.data;
+};

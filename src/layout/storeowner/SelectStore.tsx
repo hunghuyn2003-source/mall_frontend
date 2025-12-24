@@ -13,20 +13,23 @@ export default function SelectStorePage() {
   if (!user) return null;
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-10">
-      {user.stores.map((store) => (
-        <div
-          key={store.id}
-          className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100"
-          onClick={() => {
-            dispatch(setActiveStore(store));
-            router.push("/dashboard");
-          }}
-        >
-          <h3 className="font-semibold">{store.name}</h3>
-          <p className="text-sm text-gray-500">{store.type}</p>
-        </div>
-      ))}
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6">
+      <h1 className="text-3xl font-normal">Cửa hàng của bạn</h1>
+      <div className="grid w-full max-w-md [grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))] justify-center">
+        {user.stores.map((store) => (
+          <div
+            key={store.id}
+            onClick={() => {
+              console.log("SelectStore - store được chọn:", store);
+              dispatch(setActiveStore(store));
+              router.push("/store/dashboard");
+            }}
+            className="mx-auto flex aspect-square w-44 cursor-pointer flex-col items-center justify-center rounded-xl border text-center transition hover:bg-gray-100 hover:shadow-md"
+          >
+            <h3 className="text-lg font-semibold">{store.name}</h3>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
