@@ -13,6 +13,7 @@ import {
   Settings,
   Store,
   MapPin,
+  DollarSign,
 } from "lucide-react";
 
 type NavItem = {
@@ -43,7 +44,11 @@ const navItems: NavItem[] = [
     name: "Cửa hàng",
     path: "/store",
   },
-
+  {
+    icon: <DollarSign size={20} />,
+    name: "Tài chính",
+    path: "/finance",
+  },
   {
     icon: <Users size={20} />,
     name: "Tài khoản",

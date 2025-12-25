@@ -1,3 +1,18 @@
+export interface RentalFeeDetail {
+  id: number;
+  storeId: number;
+  storeName: string;
+  premisesFee: number;
+  serviceFee: number;
+}
+
+export interface RentalFees {
+  totalPremisesFee: number;
+  totalServiceFee: number;
+  totalFee: number;
+  details: RentalFeeDetail[];
+}
+
 export interface TUser {
   id: number;
   email: string;
@@ -8,6 +23,7 @@ export interface TUser {
   createdAt: string;
   updatedAt: string;
   stores: TUserStore[];
+  rentalFees?: RentalFees; // Chỉ có cho STOREOWNER
 }
 
 export interface TUserStore {
@@ -17,6 +33,8 @@ export interface TUserStore {
   avatar: string | null;
   role: "OWNER" | "STAFF";
   position: string | null;
+  premisesFee?: number; // Phí mặt bằng (chỉ cho STOREOWNER)
+  serviceFee?: number; // Phí dịch vụ (chỉ cho STOREOWNER)
 }
 
 export interface CreateUser {

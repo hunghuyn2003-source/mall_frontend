@@ -25,3 +25,9 @@ export const GENDER_LABEL: Record<string, string> = {
   female: "Nữ",
   other: "Khác",
 };
+
+export const PAYMENT_STATUS_LABEL: Record<string, string> = {
+  PAID: "Đã thanh toán",
+
+  DEBIT: "Ghi nợ",
+};
