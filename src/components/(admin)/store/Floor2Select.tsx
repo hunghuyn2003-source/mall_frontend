@@ -19,7 +19,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
 }) => {
   const [hoveredArea, setHoveredArea] = useState<number | null>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data} = useQuery({
     queryKey: ["used-areas", 2],
     queryFn: () => getUsedAreasByFloor(2),
   });
@@ -91,7 +91,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
     <div className="w-full">
       <div className="overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4">
         <svg
-          viewBox="0 0 2349 1516"
+          viewBox="0 0 2349 1602"
           className="h-auto w-full"
           style={{ maxHeight: "600px" }}
         >
@@ -133,7 +133,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             onClick={() => handleAreaClick(25)}
           >
             <rect
-              x="1119"
+              x="440"
               y="675"
               width="147"
               height="619"
@@ -144,7 +144,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="809"
-              y="770"
+              y="110"
               fill="white"
               fontSize="100"
               fontWeight="bold"
@@ -336,7 +336,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           >
             <rect
               x="1631"
-              y="281"
+              y="530"
               width="186"
               height="456"
               transform="rotate(90 1631 281)"
@@ -345,7 +345,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               strokeWidth={getStrokeWidth(21)}
             />
             <text
-              x="1403"
+              x="1150"
               y="400"
               fill="white"
               fontSize="100"
@@ -364,7 +364,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             onClick={() => handleAreaClick(22)}
           >
             <rect
-              x="1646"
+              x="2046"
               y="602"
               width="232"
               height="324"
@@ -375,7 +375,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1480"
-              y="720"
+              y="1150"
               fill="white"
               fontSize="100"
               fontWeight="bold"
@@ -394,7 +394,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           >
             <rect
               x="1819.51"
-              y="1111"
+              y="700"
               width="149.51"
               height="263"
               transform="rotate(-180 1819.51 1111)"
@@ -402,14 +402,16 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
               stroke={getAreaStroke(24)}
               strokeWidth={getStrokeWidth(24)}
             />
-            <text
-              x="1745"
-              y="1000"
-              fill="white"
-              fontSize="100"
-              fontWeight="bold"
-              textAnchor="middle"
-            >
+          <text
+  x="2145"
+  y="1050"
+  fill="white"
+  fontSize="100"
+  fontWeight="bold"
+  textAnchor="middle"
+  transform="rotate(90 1745 1000)"
+>
+
               {areasMap.get(24)?.code ?? "B-14"}
             </text>
           </g>
@@ -422,7 +424,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             onClick={() => handleAreaClick(23)}
           >
             <rect
-              x="1646"
+              x="2060"
               y="848"
               width="261"
               height="324"
@@ -433,7 +435,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             />
             <text
               x="1480"
-              y="1000"
+              y="1440"
               fill="white"
               fontSize="100"
               fontWeight="bold"
@@ -645,21 +647,21 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             </text>
           </g>
 
-          {/* Central oval area (non-interactive) */}
+    
           <ellipse
             cx="776"
-            cy="345"
-            rx="253.5"
-            ry="248.5"
+            cy="710"
+            rx="148.5"
+            ry="148.5"
             fill="white"
             stroke="#605959"
             strokeWidth="3"
           />
 
-          {/* Restroom 1 (non-interactive) */}
+
           <rect
             x="706.5"
-            y="245.5"
+            y="640"
             width="138"
             height="149"
             rx="19.5"
@@ -669,9 +671,10 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           <path
             d="M812.551 300.805L812.55 318.497L739.452 378L739.452 362.625L812.551 300.805Z"
             fill="#605959"
+            transform="translate(0, 400)"
           />
-          <ellipse cx="766.5" cy="291" rx="9.5" ry="10" fill="#605959" />
-          <ellipse cx="766.5" cy="329.5" rx="9.5" ry="22.5" fill="#605959" />
+          <ellipse cx="766.5" cy="291" rx="9.5" ry="10" fill="#605959"     transform="translate(0, 400)" />
+          <ellipse cx="766.5" cy="329.5" rx="9.5" ry="22.5" fill="#605959"    transform="translate(0, 400)" />
 
           {/* Restroom 2 (non-interactive) */}
 
@@ -698,7 +701,7 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           {/* Central circle (non-interactive) */}
           <ellipse
             cx="1545"
-            cy="1320"
+            cy="720"
             rx="148.5"
             ry="148.5"
             fill="white"
@@ -706,10 +709,10 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
             strokeWidth="3"
           />
 
-          {/* Restroom 3 (non-interactive) */}
+  
           <rect
             x="1476.5"
-            y="1245.5"
+            y="650"
             width="138"
             height="149"
             rx="19.5"
@@ -719,9 +722,10 @@ const Floor2Select: React.FC<FloorPlanSelectorProps> = ({
           <path
             d="M1582.55 1300.8L1582.55 1318.5L1509.45 1378L1509.45 1362.63L1582.55 1300.8Z"
             fill="#605959"
+             transform="translate(0, -600)"
           />
-          <ellipse cx="1536.5" cy="1291" rx="9.5" ry="10" fill="#605959" />
-          <ellipse cx="1536.5" cy="1329.5" rx="9.5" ry="22.5" fill="#605959" />
+          <ellipse cx="1536.5" cy="1291" rx="9.5" ry="10" fill="#605959"  transform="translate(0, -600)"/>
+          <ellipse cx="1536.5" cy="1329.5" rx="9.5" ry="22.5" fill="#605959"  transform="translate(0, -600)"/>
         </svg>
 
         {showLegend && (

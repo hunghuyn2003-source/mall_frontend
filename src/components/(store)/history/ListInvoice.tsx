@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { historyInvoice } from "@/api/products";
 import { ChevronLeft, ChevronRight, Receipt, Eye } from "lucide-react";
-
+import { formatDate } from "@/helper/format";
 interface Props {
   storeId: number;
   onViewDetail: (invoice: any) => void;
@@ -24,15 +24,6 @@ export default function ListInvoice({ storeId, onViewDetail }: Props) {
   const invoices = invoiceData?.data || [];
   const meta = invoiceData?.meta;
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div className="space-y-4">

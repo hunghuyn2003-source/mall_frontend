@@ -2,17 +2,11 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getChatUsers,
-  getConversations,
-  type ChatUser,
-  type Conversation,
-} from "@/api/chat";
+import { getChatUsers, type ChatUser, type Conversation } from "@/api/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import AvatarText from "@/components/ui/avatar/AvatarText";
 import { Search } from "lucide-react";
-import dayjs from "dayjs";
 
 interface ChatSidebarProps {
   onSelectUser: (user: ChatUser) => void;
@@ -30,60 +24,34 @@ export default function ChatSidebar({
   const currentUser = useSelector((state: RootState) => state.auth.user);
   const isStoreOwner = currentUser?.role === "STOREOWNER";
   const [activeTab, setActiveTab] = useState<"users" | "conversations">(
-    isStoreOwner ? "conversations" : "users",
+    isStoreOwner ? "conversations" : "conversations",
   );
-  // Fetch users
+
   const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ["chat-users"],
     queryFn: getChatUsers,
     staleTime: 30 * 1000,
   });
 
-  // Fetch conversations
-  const { data: conversationsData, isLoading: conversationsLoading } = useQuery(
-    {
-      queryKey: ["chat-conversations"],
-      queryFn: () => getConversations({ page: 1, limit: 50 }),
-      staleTime: 30 * 1000,
-    },
-  );
+  const storeOwnerUsers = users.filter((user) => user.role === "STOREOWNER");
+  const adminUsers = users.filter((user) => user.role === "ADMIN");
 
-  const filteredUsers = users.filter(
+  const filteredUsers = storeOwnerUsers.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const filteredConversations =
-    conversationsData?.data.filter(
-      (conv) =>
-        conv.members.some((member) =>
-          member.user.name.toLowerCase().includes(searchQuery.toLowerCase()),
-        ) ||
-        conv.lastMessage?.content
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()),
-    ) || [];
-
-  const getOtherUser = (conversation: Conversation) => {
-    return conversation.members.find((m) => m.user.id !== currentUser?.id)
-      ?.user;
-  };
+  const filteredAdminUsers = adminUsers.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <div className="flex h-full flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
       {!isStoreOwner && (
         <div className="mt-2 flex border-b border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => setActiveTab("users")}
-            className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === "users"
-                ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
-            }`}
-          >
-            Chủ cửa hàng
-          </button>
           <button
             onClick={() => setActiveTab("conversations")}
             className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
@@ -93,6 +61,16 @@ export default function ChatSidebar({
             }`}
           >
             Nội bộ
+          </button>
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === "users"
+                ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+                : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+            }`}
+          >
+            Chủ cửa hàng
           </button>
         </div>
       )}
@@ -155,61 +133,42 @@ export default function ChatSidebar({
           </div>
         ) : (
           <div>
-            {conversationsLoading ? (
+            {usersLoading ? (
               <div className="p-4 text-center text-sm text-gray-500">
                 Đang tải...
               </div>
-            ) : filteredConversations.length === 0 ? (
+            ) : filteredAdminUsers.length === 0 ? (
               <div className="p-4 text-center text-sm text-gray-500">
                 {searchQuery
-                  ? "Không tìm thấy cuộc trò chuyện"
-                  : "Không có cuộc trò chuyện nào"}
+                  ? "Không tìm thấy người dùng"
+                  : "Không có người dùng nào"}
               </div>
             ) : (
-              filteredConversations.map((conversation) => {
-                const otherUser = getOtherUser(conversation);
-                if (!otherUser) return null;
-
-                return (
-                  <button
-                    key={conversation.id}
-                    onClick={() => onSelectConversation(conversation)}
-                    className={`flex w-full items-center gap-3 border-b border-gray-100 p-3 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 ${
-                      selectedConversationId === conversation.id
-                        ? "bg-blue-50 dark:bg-gray-700"
-                        : ""
-                    }`}
-                  >
-                    {otherUser.avatar ? (
-                      <img
-                        src={otherUser.avatar}
-                        alt={otherUser.name}
-                        className="h-12 w-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <AvatarText name={otherUser.name} className="h-12 w-12" />
-                    )}
-                    <div className="flex-1 overflow-hidden">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium text-gray-900 dark:text-white">
-                          {otherUser.name}
-                        </div>
-                        {conversation.lastMessage && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {dayjs(conversation.lastMessage.createdAt).format(
-                              "HH:mm",
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div className="truncate text-sm text-gray-500 dark:text-gray-400">
-                        {conversation.lastMessage?.content ||
-                          "Chưa có tin nhắn"}
-                      </div>
+              filteredAdminUsers.map((user) => (
+                <button
+                  key={user.id}
+                  onClick={() => onSelectUser(user)}
+                  className="flex w-full items-center gap-3 border-b border-gray-100 p-3 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+                >
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="h-12 w-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    <AvatarText name={user.name} className="h-12 w-12" />
+                  )}
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      {user.name}
                     </div>
-                  </button>
-                );
-              })
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {user.email}
+                    </div>
+                  </div>
+                </button>
+              ))
             )}
           </div>
         )}

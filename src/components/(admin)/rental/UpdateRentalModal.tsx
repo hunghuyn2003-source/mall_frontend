@@ -24,6 +24,7 @@ import { RENTAL_STATUS_LABEL, STORE_TYPE_LABEL } from "@/helper/Label";
 import ComponentCard from "@/components/common/ComponentCard";
 import Floor1Select from "../store/Floor1Select";
 import Floor2Select from "../store/Floor2Select";
+import Floor3Select from "../store/Floor3Select";
 
 interface Props {
   isOpen: boolean;
@@ -121,12 +122,16 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
         premisesFee: rentalDetail.premisesFee || 0,
         serviceFee: rentalDetail.serviceFee || 0,
       });
-      setCurrentFloor(rentalDetail.area.floor.level);
-      setSelectedAreaId(rentalDetail.area.id);
+      if (rentalDetail.area?.floor?.level) {
+        setCurrentFloor(rentalDetail.area.floor.level);
+      }
+      if (rentalDetail.area?.id) {
+        setSelectedAreaId(rentalDetail.area.id);
+      }
     }
   }, [rentalDetail, reset]);
 
-  // Auto-fill premisesFee when area is selected
+
   React.useEffect(() => {
     if (selectedAreaId !== null && selectedAreaId !== rentalDetail?.area?.id) {
       const area = areasMap.get(selectedAreaId);
@@ -376,13 +381,15 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                         }}
                       >
                         <MenuItem value="">Chọn trạng thái</MenuItem>
-                        {Object.entries(RENTAL_STATUS_LABEL).map(
-                          ([key, label]) => (
-                            <MenuItem key={key} value={key}>
-                              {label}
-                            </MenuItem>
-                          ),
-                        )}
+                          {Object.entries(RENTAL_STATUS_LABEL).map(([key, config]) => (
+    <MenuItem key={key} value={key}>
+      <Chip
+        label={config.label}
+        color={config.color}
+        size="small"
+      />
+    </MenuItem>
+  ))}
                       </TextField>
                     )}
                   />
@@ -445,11 +452,11 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                 />
               )}
               {currentFloor === 3 && (
-                <div className="p-4 text-center">
-                  <Typography variant="body1" color="text.secondary">
-                    Sơ đồ tầng 3 đang được cập nhật
-                  </Typography>
-                </div>
+                <Floor3Select
+                  selectedAreaId={selectedAreaId}
+                  onAreaSelect={setSelectedAreaId}
+                  currentRentalAreaId={rentalDetail?.area?.id || null}
+                />
               )}
             </div>
           </ComponentCard>

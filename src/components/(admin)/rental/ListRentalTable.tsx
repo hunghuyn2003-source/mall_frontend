@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { listRental } from "@/api/rental";
 import { ChevronLeft, ChevronRight, Edit } from "lucide-react";
 import { RENTAL_STATUS_LABEL } from "@/helper/Label";
-
+import { formatDate } from "@/helper/format";
+import { Chip } from "@mui/material";
 interface Props {
   onEdit: (rental: any) => void;
 }
@@ -56,11 +57,21 @@ export default function ListRentalTable({ onEdit }: Props) {
                     Mã hợp đồng
                   </th>
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
-                    Cửa hàng
+                    Vị trí
                   </th>
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
+                    Cửa hàng
+                  </th>
+                   <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Chủ sở hữu
                   </th>
+                   <th className="px-5 py-3 text-start font-medium text-gray-500">
+                    Ngày đăng ký
+                  </th>
+                    <th className="px-5 py-3 text-start font-medium text-gray-500">
+                    Ngày hết hạn
+                  </th>
+
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Trạng thái
                   </th>
@@ -80,16 +91,37 @@ export default function ListRentalTable({ onEdit }: Props) {
                       {rental.code || "___"}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                      {rental.area?.floor?.level != null
+                ? `Tầng ${rental.area.floor.level} -`
+                : ""} {rental.area?.code || "___"} 
+                    </td>
+                      <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.store?.name || "___"}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.owner?.name || "___"}
                     </td>
-                    <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-                      {RENTAL_STATUS_LABEL[rental.status] ||
-                        rental.status ||
-                        "___"}
-                    </td>
+                  <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+  {formatDate(rental.startDate)}
+</td>
+<td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+  {formatDate(rental.endDate)}
+</td>
+
+                    
+                   <td className="text-md px-5 py-3">
+  {RENTAL_STATUS_LABEL[rental.status] ? (
+    <Chip
+      label={RENTAL_STATUS_LABEL[rental.status].label}
+      color={RENTAL_STATUS_LABEL[rental.status].color}
+      size="small"
+      variant="filled"
+    />
+  ) : (
+    <span className="text-gray-400">___</span>
+  )}
+</td>
+
                     <td className="px-5 py-3">
                       <button
                         onClick={(e) => {

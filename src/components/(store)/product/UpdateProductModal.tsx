@@ -25,11 +25,7 @@ import {
 } from "@mui/material";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
-
-const formatNumber = (value: number | string) => {
-  if (value === "" || value === null || value === undefined) return "";
-  return Number(value).toLocaleString("vi-VN");
-};
+import { formatNumber } from "@/helper/format";
 
 const parseNumber = (value: string) => {
   const cleaned = value.replace(/\./g, "");

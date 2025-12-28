@@ -12,7 +12,7 @@ interface Props {
 
 export default function ListProduct({ storeId, onAddToCart }: Props) {
   const [page, setPage] = useState(1);
-  const limit = 9;
+  const limit = 10;
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 

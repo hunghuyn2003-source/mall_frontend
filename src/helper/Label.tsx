@@ -1,13 +1,18 @@
+import { Chip } from "@mui/material";
+
 export const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Ban quản lý",
   STOREOWNER: "Chủ cửa hàng",
   STORESTAFF: "Nhân viên cửa hàng",
 };
 
-export const RENTAL_STATUS_LABEL: Record<string, string> = {
-  INACTIVE: "Chưa hiệu lực",
-  ACTIVE: "Có hiệu lực",
-  EXPIRED: "Hết hạn",
+export const RENTAL_STATUS_LABEL: Record<
+  string,
+  { label?: string; color?: "default" | "primary" | "warning" | "error" }
+> = {
+  INACTIVE: { label: "Chưa hiệu lực", color: "warning" },
+  ACTIVE: { label: "Có hiệu lực", color: "primary" },
+  EXPIRED: { label: "Hết hạn", color: "error" },
 };
 
 export const STORE_TYPE_LABEL: Record<string, string> = {

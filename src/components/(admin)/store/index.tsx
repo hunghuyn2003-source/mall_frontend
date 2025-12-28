@@ -2,7 +2,7 @@
 import { useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import ListStoreTable from "./ListStoreTable";
-import UpdateStoreModal from "./UpdateStoreModal";
+
 import { useModal } from "../../../hooks/useModal";
 
 export default function Store() {
@@ -21,11 +21,7 @@ export default function Store() {
           <ListStoreTable onEdit={handleEdit} />
         </ComponentCard>
       </div>
-      <UpdateStoreModal
-        isOpen={isOpen}
-        onClose={closeModal}
-        store={selectedStore}
-      />
+
     </div>
   );
 }

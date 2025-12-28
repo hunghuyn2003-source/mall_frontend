@@ -52,7 +52,7 @@ const navItems: NavItem[] = [
   {
     icon: <Users size={20} />,
     name: "Tài khoản",
-    path: "/account",
+    path: "/user",
   },
   {
     icon: <MessageSquare size={20} />,

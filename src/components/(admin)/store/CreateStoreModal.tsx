@@ -19,9 +19,11 @@ import { Modal } from "@/components/ui/modal";
 import CreateOwnerModal from "./CreateOwnerModal";
 import Floor1Select from "./Floor1Select";
 import Floor2Select from "./Floor2Select";
+import Floor3Select from "./Floor3Select";
 import ComponentCard from "@/components/common/ComponentCard";
 import { ROLE_LABEL } from "@/helper/Label";
 import { MenuItem } from "@mui/material";
+
 
 interface Props {
   onClose: () => void;
@@ -497,6 +499,12 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                   )}
                   {currentFloor === 2 && (
                     <Floor2Select
+                      selectedAreaId={selectedArea}
+                      onAreaSelect={setSelectedArea}
+                    />
+                  )}
+                  {currentFloor === 3 && (
+                    <Floor3Select
                       selectedAreaId={selectedArea}
                       onAreaSelect={setSelectedArea}
                     />

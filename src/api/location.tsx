@@ -5,10 +5,21 @@ export const listFloors = async () => {
   return res.data;
 };
 
-export const getAreasByFloor = async (floorId: number) => {
-  const res = await instance.get(`/api/v1/location/floors/${floorId}/areas`);
+export const getAreasByFloor = async (floorId: number, limit?: number) => {
+  const res = await instance.get(
+    `/api/v1/location/floors/${floorId}/areas`,
+    {
+      params: {
+        limit: limit ?? 30, 
+      },
+    }
+  );
+
   return res.data;
 };
+
+
+
 
 export const getUsedAreasByFloor = async (floorId: number) => {
   const res = await instance.get(

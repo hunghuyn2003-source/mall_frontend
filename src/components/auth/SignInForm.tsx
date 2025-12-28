@@ -49,7 +49,7 @@ export default function SignInForm() {
           break;
 
         case "STOREOWNER":
-          router.push("/store/dashboard");
+          router.push("/store/statistical");
           break;
 
         case "STORESTAFF":

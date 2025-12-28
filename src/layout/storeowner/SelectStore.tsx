@@ -22,7 +22,7 @@ export default function SelectStorePage() {
             onClick={() => {
               console.log("SelectStore - store được chọn:", store);
               dispatch(setActiveStore(store));
-              router.push("/store/dashboard");
+              router.push("/store/statistical");
             }}
             className="mx-auto flex aspect-square w-44 cursor-pointer flex-col items-center justify-center rounded-xl border text-center transition hover:bg-gray-100 hover:shadow-md"
           >

@@ -7,6 +7,7 @@ import ListAreaTable from "./ListAreaTable";
 import UpdateAreaModal from "./UpdateAreaModal";
 import Floor1Select from "../store/Floor1Select";
 import Floor2Select from "../store/Floor2Select";
+import Floor3Select from "../store/Floor3Select";
 import { useModal } from "@/hooks/useModal";
 import { findAllStoresWithActiveRental } from "@/api/store";
 
@@ -19,7 +20,6 @@ export default function Location() {
   const { data: storesData } = useQuery({
     queryKey: ["stores-rented", currentFloor],
     queryFn: () => findAllStoresWithActiveRental(currentFloor),
-    enabled: currentFloor !== 3,
   });
 
   const stores = storesData || [];
@@ -72,13 +72,16 @@ export default function Location() {
               />
             )}
             {currentFloor === 3 && (
-              <div className="p-4 text-center">
-                <p className="text-gray-500">Sơ đồ tầng 3 đang được cập nhật</p>
-              </div>
+              <Floor3Select
+                selectedAreaId={selectedAreaId}
+                onAreaSelect={setSelectedAreaId}
+                showLegend={false}
+                allowSelect={false}
+              />
             )}
           </div>
 
-          {currentFloor !== 3 && (
+          {currentFloor && (
             <div className="w-1/2 space-y-3">
               <h3 className="text-sm font-medium text-gray-700">
                 Cửa hàng đã thuê

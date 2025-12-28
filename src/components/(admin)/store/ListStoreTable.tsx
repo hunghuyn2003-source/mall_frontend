@@ -61,9 +61,8 @@ export default function ListStoreTable({ onEdit }: Props) {
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Loại
                   </th>
-                  <th className="px-5 py-3 text-start font-medium text-gray-500">
-                    Thao tác
-                  </th>
+
+                  
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -95,17 +94,8 @@ export default function ListStoreTable({ onEdit }: Props) {
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {STORE_TYPE_LABEL[store.type] || "___"}
                     </td>
-                    <td className="px-5 py-3">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(store);
-                        }}
-                        className="flex items-center gap-1 rounded bg-blue-600 px-1 py-1 text-xs text-white hover:bg-blue-700"
-                      >
-                        <Edit size={14} />
-                      </button>
-                    </td>
+              
+                    
                   </tr>
                 ))}
               </tbody>

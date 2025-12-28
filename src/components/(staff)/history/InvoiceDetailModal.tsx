@@ -3,6 +3,7 @@
 import { Modal } from "@/components/ui/modal";
 import { Typography } from "@mui/material";
 import { Receipt, X } from "lucide-react";
+import { formatDate } from "@/helper/format";
 
 interface Props {
   isOpen: boolean;
@@ -17,15 +18,6 @@ export default function InvoiceDetailModal({
 }: Props) {
   if (!invoice) return null;
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   const items = invoice.items || [];
   const total = invoice.total || invoice.totalAmount || 0;

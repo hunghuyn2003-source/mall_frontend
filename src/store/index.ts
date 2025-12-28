@@ -13,25 +13,21 @@ import {
   REGISTER,
 } from "redux-persist";
 
-import storage from "redux-persist/lib/storage"; // localStorage
+import storage from "redux-persist/lib/storage";
 
-// 1️⃣ Combine reducers
 const rootReducer = combineReducers({
   auth: authSlice,
   store: storeSlice,
 });
 
-// 2️⃣ Persist config
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "store"], // chỉ persist user + activeStore
+  whitelist: ["auth", "store"],
 };
 
-// 3️⃣ Persist reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// 4️⃣ Configure store
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -42,9 +38,7 @@ export const store = configureStore({
     }),
 });
 
-// 5️⃣ Export types
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// 6️⃣ Persistor
 export const persistor = persistStore(store);

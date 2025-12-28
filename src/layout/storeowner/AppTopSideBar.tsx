@@ -33,7 +33,7 @@ const MENU_STOREOWNER = [
   {
     icon: <LayoutDashboard size={20} />,
     name: "Thống kê",
-    path: "/store/dashboard",
+    path: "/store/statistical",
   },
   { icon: <Package size={20} />, name: "Sản phẩm", path: "/store/product" },
   { icon: <Users size={20} />, name: "Nhân viên", path: "/store/staff" },
@@ -42,11 +42,7 @@ const MENU_STOREOWNER = [
     name: "Lịch sử hóa đơn",
     path: "/store/history",
   },
-  {
-    icon: <CalendarDays size={20} />,
-    name: "Xếp lịch làm",
-    path: "/store/scheduling",
-  },
+
   { icon: <MessageSquare size={20} />, name: "Chat", path: "/store/chat" },
 ];
 
