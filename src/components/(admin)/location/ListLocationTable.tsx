@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listRental } from "@/api/rental";
 import { ChevronLeft, ChevronRight, Edit } from "lucide-react";
 import { RENTAL_STATUS_LABEL } from "@/helper/Label";
-
+import { Chip } from "@mui/material";
 interface Props {
   onEdit: (rental: any) => void;
 }
@@ -108,7 +108,16 @@ export default function ListRentalTable({ onEdit }: Props) {
                         : "___"}
                     </td>
                     <td className="text-md px-4 py-3 text-gray-800 dark:text-white">
-                      {RENTAL_STATUS_LABEL[rental.status] || "_"}
+                      {RENTAL_STATUS_LABEL[rental.status] ? (
+                        <Chip
+                          label={RENTAL_STATUS_LABEL[rental.status].label}
+                          color={RENTAL_STATUS_LABEL[rental.status].color}
+                          size="small"
+                          variant="filled"
+                        />
+                      ) : (
+                        <span className="text-gray-400">___</span>
+                      )}
                     </td>
                     <td className="px-5 py-3">
                       <button

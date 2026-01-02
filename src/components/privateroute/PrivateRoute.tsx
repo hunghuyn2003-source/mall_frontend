@@ -41,18 +41,15 @@ export default function PrivateRoute({
     if (user) {
       dispatch(setUser(user));
     }
-
     if (
       isError &&
       (error as any)?.response?.status === 401 &&
       !redirectedRef.current
     ) {
       redirectedRef.current = true;
-      router.replace("/signin");
+      router.push("/signin");
     }
   }, [user, isError, error, dispatch, router]);
-
-  if (isLoading) return null;
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
     return null;
