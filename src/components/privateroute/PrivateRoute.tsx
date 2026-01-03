@@ -40,16 +40,14 @@ export default function PrivateRoute({
   useEffect(() => {
     if (user) {
       dispatch(setUser(user));
+      return;
     }
-    if (
-      isError &&
-      (error as any)?.response?.status === 401 &&
-      !redirectedRef.current
-    ) {
+
+    if (isError && !redirectedRef.current) {
       redirectedRef.current = true;
       router.push("/signin");
     }
-  }, [user, isError, error, dispatch, router]);
+  }, [user, isError, dispatch, router]);
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
     return null;
