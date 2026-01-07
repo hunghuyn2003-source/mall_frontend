@@ -20,6 +20,26 @@ export const listStore = async (params?: {
   return res.data;
 };
 
+export const getStoreDetail = async (
+  id: number,
+  params?: {
+    membersPage?: number;
+    membersLimit?: number;
+    productsPage?: number;
+    productsLimit?: number;
+  },
+) => {
+  const res = await instance.get(`/api/v1/stores/${id}`, {
+    params: {
+      membersPage: params?.membersPage ?? 1,
+      membersLimit: params?.membersLimit ?? 5,
+      productsPage: params?.productsPage ?? 1,
+      productsLimit: params?.productsLimit ?? 5,
+    },
+  });
+  return res.data;
+};
+
 export const updateStore = async (id: number, payload: any) => {
   const res = await instance.patch(`/api/v1/stores/${id}`, payload);
   return res.data;

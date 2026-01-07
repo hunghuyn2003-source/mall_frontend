@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   getConversationWithUser,
-  type ChatUser,
-  type Conversation,
+
 } from "@/api/chat";
 import ChatSidebar from "./ChatSidebar";
 import ChatWindow from "./ChatWindow";
+import { ChatUser, Conversation } from "@/type/chat";
 
 export default function Chat() {
   const [selectedConversation, setSelectedConversation] =

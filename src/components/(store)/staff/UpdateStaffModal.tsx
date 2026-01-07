@@ -80,14 +80,14 @@ export default function UpdateStaffModal({ isOpen, onClose, staff }: Props) {
 
   if (isLoading) {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] p-6">
+      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
         <div className="flex h-32 items-center justify-center">Loading...</div>
       </Modal>
     );
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] p-6">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
       <Typography variant="h6" mb={2}>
         Cập nhật nhân viên
       </Typography>

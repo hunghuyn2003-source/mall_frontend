@@ -15,7 +15,7 @@ export default function StoreOwnerOverview() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   
-  // Lấy storeId từ Redux
+
   const activeStore = useSelector((state: RootState) => state.store.activeStore);
   const storeId = activeStore?.id;
 

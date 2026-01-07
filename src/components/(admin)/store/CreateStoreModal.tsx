@@ -210,7 +210,7 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px]">
+      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
         <div>
           <h2 className="mb-8 text-2xl font-normal text-gray-800 dark:text-white">
             Tạo cửa hàng

@@ -1,28 +1,8 @@
 import instance from "@/utils/axios";
+import { RevenueByMonthResponse, AdminOverviewResponse, StoreOwnerOverviewResponse } from "@/type/statistical";
 
-// Types
-export interface RevenueByMonthResponse {
-  year: number;
-  data: Array<{
-    month: number;
-    revenue: number;
-  }>;
-  totalRevenue: number;
-}
 
-export interface AdminOverviewResponse {
-  totalStores: number;
-  totalStoreOwners: number;
-  activeRentals: number;
-  activeContracts: number;
-}
 
-export interface StoreOwnerOverviewResponse {
-  totalStaff: number;
-  totalProducts: number;
-}
-
-// Admin API functions
 export const getAdminRevenueByMonth = async (
   year?: number,
 ): Promise<RevenueByMonthResponse> => {
@@ -38,7 +18,6 @@ export const getAdminOverview = async (): Promise<AdminOverviewResponse> => {
   return res.data;
 };
 
-// StoreOwner API functions
 export const getStoreOwnerRevenueByMonth = async (
   storeId: number,
   year?: number,

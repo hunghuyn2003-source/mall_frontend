@@ -174,14 +174,14 @@ export default function UpdateProductModal({
 
   if (isLoading) {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px]">
+      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px] ">
         <div className="flex h-32 items-center justify-center">Loading...</div>
       </Modal>
     );
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px]">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px] ">
       <Typography variant="h6" mb={2}>
         Cập nhật sản phẩm
       </Typography>

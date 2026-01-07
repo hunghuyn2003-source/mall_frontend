@@ -54,9 +54,9 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md ">
       <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Tạo thông báo hóa đơn</h2>
+        <h2 className="text-2xl font-normal">Tạo thông báo hóa đơn</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col gap-4">

@@ -62,6 +62,25 @@ export default function ListPaymentTable({ onCreateNotification }: Props) {
             sx={{ width: 300 }}
             size="small"
           />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
+            <DatePicker
+              label="Hóa đơn tháng"
+              value={paymentDate}
+              onChange={(newValue) => {
+                setPage(1);
+                setPaymentDate(newValue as Dayjs | null);
+              }}
+              views={["month", "year"]}
+              format="MM/YYYY"
+              slotProps={{
+                popper: { sx: { zIndex: 9999999 } },
+                textField: {
+                  size: "small",
+                  sx: { width: 200 },
+                },
+              }}
+            />
+          </LocalizationProvider>
           <TextField
             select
             value={status || ""}
@@ -82,28 +101,10 @@ export default function ListPaymentTable({ onCreateNotification }: Props) {
             }}
           >
             <MenuItem value="">Tất cả</MenuItem>
-            <MenuItem value="PAID">Đã thu</MenuItem>
-            <MenuItem value="DEBIT">Công nợ</MenuItem>
+            <MenuItem value="PAID">Đã thanh toán</MenuItem>
+            <MenuItem value="DEBIT">Ghi nợ</MenuItem>
           </TextField>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
-            <DatePicker
-              label="Tháng/Năm"
-              value={paymentDate}
-              onChange={(newValue) => {
-                setPage(1);
-                setPaymentDate(newValue as Dayjs | null);
-              }}
-              views={["month", "year"]}
-              format="MM/YYYY"
-              slotProps={{
-                popper: { sx: { zIndex: 9999999 } },
-                textField: {
-                  size: "small",
-                  sx: { width: 200 },
-                },
-              }}
-            />
-          </LocalizationProvider>
+        
         </div>
         <button
           onClick={onCreateNotification}

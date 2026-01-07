@@ -82,7 +82,7 @@ export default function UpdateUserModal({ isOpen, onClose, user }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] p-6">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] ">
       <Typography variant="h6" mb={2}>
         Cập nhật tài khoản
       </Typography>

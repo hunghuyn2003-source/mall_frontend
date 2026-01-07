@@ -153,7 +153,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
   }, [isOpen, rentalDetail, setValue]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px]">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] ">
       <Typography variant="h6" mb={4}>
         Cập nhật hợp đồng
       </Typography>

@@ -5,10 +5,9 @@ import {
   createPayment,
   getPayments,
   createPaymentNotification,
-  type CreatePaymentDto,
-  type GetPaymentsParams,
-  type CreatePaymentNotificationDto,
+  
 } from "@/api/finance";
+import { CreatePaymentDto, GetPaymentsParams, CreatePaymentNotificationDto } from "@/type/finance";
 
 export function useCreatePayment() {
   const queryClient = useQueryClient();

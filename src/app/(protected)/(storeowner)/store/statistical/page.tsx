@@ -1,5 +1,5 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import Statistical from "@/components/(storeowner)/statistical";
+import Statistical from "@/components/(store)/statistical";
 
 export default function StatisticalPage() {
   return (

@@ -16,9 +16,9 @@ export default function SelectStorePage() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-6">
       <h1 className="text-3xl font-normal">Cửa hàng của bạn</h1>
       <div className="grid w-full max-w-md [grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))] justify-center">
-        {user.stores.map((store) => (
+        {user.stores.map((store, index) => (
           <div
-            key={store.id}
+            key={`${store.id}-${index}`}
             onClick={() => {
               console.log("SelectStore - store được chọn:", store);
               dispatch(setActiveStore(store));

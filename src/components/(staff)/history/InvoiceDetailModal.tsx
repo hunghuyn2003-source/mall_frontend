@@ -23,7 +23,7 @@ export default function InvoiceDetailModal({
   const total = invoice.total || invoice.totalAmount || 0;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px]">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px] ">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Receipt className="h-5 w-5 text-blue-600" />

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getChatUsers, type ChatUser, type Conversation } from "@/api/chat";
+import { getChatUsers } from "@/api/chat";
+import { ChatUser, Conversation } from "@/type/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import AvatarText from "@/components/ui/avatar/AvatarText";
@@ -16,8 +17,7 @@ interface ChatSidebarProps {
 
 export default function ChatSidebar({
   onSelectUser,
-  onSelectConversation,
-  selectedConversationId,
+
 }: ChatSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 

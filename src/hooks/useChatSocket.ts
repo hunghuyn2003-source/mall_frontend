@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import type { Socket } from "socket.io-client";
-import type { Message, Conversation } from "@/api/chat";
+import { Message, Conversation } from "@/type/chat";
 
 interface UseChatSocketReturn {
   socket: Socket | null;
@@ -42,7 +42,6 @@ export const useChatSocket = (
   const socketRef = useRef<Socket | null>(null);
   const user = useSelector((state: RootState) => state.auth.user);
 
-  // Store callbacks in refs to avoid recreating socket on every render
   const callbacksRef = useRef({
     onNewMessage,
     onMessageSent,
@@ -51,7 +50,6 @@ export const useChatSocket = (
     onUserTyping,
   });
 
-  // Update callbacks ref when they change
   useEffect(() => {
     callbacksRef.current = {
       onNewMessage,
@@ -71,29 +69,20 @@ export const useChatSocket = (
   useEffect(() => {
     if (!user) return;
 
-    // Prevent multiple connections
     if (socketRef.current?.connected) {
       return;
     }
 
-    // Dynamic import socket.io-client
     import("socket.io-client").then(({ io }) => {
-      // Backend WebSocket server URL
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:100000";
       let socketUrl = apiUrl.replace(/\/api\/v1$/, "").replace(/\/$/, "");
 
-      // Replace port with 8000 (WebSocket port)
-      if (socketUrl.includes(":")) {
-        socketUrl = socketUrl.replace(/:\d+/, ":8000");
-      } else {
-        socketUrl = socketUrl + ":8000";
-      }
-
+  
       console.log("🔌 Connecting to WebSocket:", `${socketUrl}/chat`);
 
       const newSocket = io(`${socketUrl}/chat`, {
         withCredentials: true,
-        transports: ["websocket", "polling"], // Try WebSocket first, fallback to polling
+        transports: ["websocket", "polling"],
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,

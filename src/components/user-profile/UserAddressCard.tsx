@@ -84,7 +84,7 @@ export default function UserAddressCard() {
           </button>
         </div>
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal} className="m-4 max-w-[700px]">
+      <Modal isOpen={isOpen} onClose={closeModal} className="m-4 max-w-[700px] p-6">
         <div className="no-scrollbar relative w-full overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">

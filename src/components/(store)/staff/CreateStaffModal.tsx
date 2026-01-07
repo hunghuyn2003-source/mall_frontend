@@ -77,7 +77,7 @@ export default function CreateStaffModal({ isOpen, onClose, storeId }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] p-6">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
       <Typography variant="h6" mb={2}>
         Tạo tài khoản nhân viên
       </Typography>

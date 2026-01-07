@@ -152,7 +152,7 @@ export default function CreateProductModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px]">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[600px] ">
       <Typography variant="h6" mb={2}>
         Tạo sản phẩm mới
       </Typography>

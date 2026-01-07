@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMessages, type Message, type Conversation } from "@/api/chat";
+import { getMessages, } from "@/api/chat";
+import { Message, Conversation } from "@/type/chat";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
