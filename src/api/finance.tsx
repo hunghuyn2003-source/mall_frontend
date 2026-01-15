@@ -1,6 +1,9 @@
 import instance from "@/utils/axios";
-import { CreatePaymentDto, GetPaymentsParams, CreatePaymentNotificationDto } from "@/type/finance";
-
+import {
+  CreatePaymentDto,
+  GetPaymentsParams,
+  CreatePaymentNotificationDto,
+} from "@/type/finance";
 
 export const createPayment = async (payload: CreatePaymentDto) => {
   const res = await instance.post("/api/v1/finance/payments", payload);
@@ -19,6 +22,11 @@ export const getPayments = async (params?: GetPaymentsParams) => {
       search: params?.search,
     },
   });
+  return res.data;
+};
+
+export const getStorePaymentHistory = async (storeId: number) => {
+  const res = await instance.get(`/api/v1/finance/stores/${storeId}/payments`);
   return res.data;
 };
 

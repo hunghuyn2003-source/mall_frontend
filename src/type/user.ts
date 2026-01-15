@@ -23,7 +23,7 @@ export interface TUser {
   createdAt: string;
   updatedAt: string;
   stores: TUserStore[];
-  rentalFees?: RentalFees; // Chỉ có cho STOREOWNER
+  rentalFees?: RentalFees;
 }
 
 export interface TUserStore {
@@ -33,8 +33,8 @@ export interface TUserStore {
   avatar: string | null;
   role: "OWNER" | "STAFF";
   position: string | null;
-  premisesFee?: number; // Phí mặt bằng (chỉ cho STOREOWNER)
-  serviceFee?: number; // Phí dịch vụ (chỉ cho STOREOWNER)
+  premisesFee?: number; 
+  serviceFee?: number; 
 }
 
 export interface CreateUser {

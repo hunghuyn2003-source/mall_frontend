@@ -15,7 +15,7 @@ export default function Chat() {
     useState<Conversation | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
-  // Get or create conversation with user
+
   const { data: conversationWithUser, isLoading: loadingConversation } =
     useQuery({
       queryKey: ["chat-conversation-with-user", selectedUserId],
@@ -23,7 +23,7 @@ export default function Chat() {
       enabled: !!selectedUserId,
     });
 
-  // Update selected conversation when conversationWithUser changes
+
   React.useEffect(() => {
     if (conversationWithUser) {
       setSelectedConversation(conversationWithUser);

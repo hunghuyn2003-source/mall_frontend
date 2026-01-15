@@ -9,7 +9,7 @@ const instance = axios.create({
   },
 });
 
-// Request interceptor
+
 instance.interceptors.request.use(
   (config) => {
     return config;
@@ -19,7 +19,7 @@ instance.interceptors.request.use(
   },
 );
 
-// Response interceptor
+
 instance.interceptors.response.use(
   (response) => response,
   (error) => {

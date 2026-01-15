@@ -20,12 +20,11 @@ interface ChatWindowProps {
   conversation: Conversation | null;
 }
 
-// Extended Message type for optimistic updates
+
 interface TempMessage extends Omit<Message, "id"> {
   id: string | number;
 }
 
-// Socket event data types
 interface SocketMessageData {
   message?: Message;
   success?: boolean;
@@ -58,7 +57,6 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
     });
   };
 
-  // Fetch messages
   const { data: messagesData, isLoading } = useQuery({
     queryKey: ["chat-messages", conversation?.id],
     queryFn: () => getMessages(conversation!.id, { page: 1, limit: 50 }),
@@ -76,7 +74,6 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
         .reverse()
     : [];
 
-  // WebSocket
   const {
     isConnected,
     sendMessage: sendMessageSocket,
@@ -87,7 +84,7 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
     error: socketError,
   } = useChatSocket(
     (data: Message | SocketMessageData) => {
-      // New message received - handle both formats
+ 
       const newMessage =
         (data as SocketMessageData)?.message || (data as Message);
       if (
@@ -125,7 +122,6 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
       setTimeout(() => scrollToBottom(true), 50);
     },
     (data: Message | SocketMessageData) => {
-      // Message sent confirmation - handle both formats
       const sentMessage =
         (data as SocketMessageData)?.message || (data as Message);
       if (
@@ -135,7 +131,6 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
         return;
       }
 
-      // Clear timeout when message_sent is received
       if ((window as any).__messageSendTimeout) {
         clearTimeout((window as any).__messageSendTimeout);
         (window as any).__messageSendTimeout = null;
@@ -153,7 +148,7 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
             };
           }
 
-          // Remove temp messages with same content
+
           const filteredData = old.data.filter((m: TempMessage) => {
             if (
               typeof m.id === "string" &&
@@ -190,7 +185,7 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
     undefined,
     undefined,
     (data) => {
-      // User typing
+
       if (
         data.conversationId === conversation?.id &&
         data.userId !== currentUser?.id
@@ -208,7 +203,7 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
     },
   );
 
-  // Join/leave conversation
+
   useEffect(() => {
     if (conversation && isConnected) {
       joinConversation(conversation.id);
@@ -218,7 +213,7 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
     }
   }, [conversation?.id, isConnected, joinConversation, leaveConversation]);
 
-  // Scroll to bottom when messages change
+
   useLayoutEffect(() => {
     if (messages.length > 0) {
       scrollToBottom(false);
@@ -280,7 +275,7 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
 
     setIsSending(true);
 
-    // Send via WebSocket
+
     sendMessageSocket(conversation.id, trimmedContent);
 
     setMessageContent("");
@@ -291,13 +286,12 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
       typingTimeoutRef.current = null;
     }
 
-    // Fallback: reset sending state if no response after 10 seconds
     const timeoutId = setTimeout(() => {
       setIsSending(false);
       console.warn("Message send timeout - no response from server");
     }, 10000);
 
-    // Store timeout ID to clear it when message_sent is received
+
     (window as any).__messageSendTimeout = timeoutId;
   };
 
@@ -456,7 +450,6 @@ export default function ChatWindow({ conversation }: ChatWindowProps) {
         )}
       </div>
 
-      {/* Input */}
       <div className="border-t border-gray-200 p-4 dark:border-gray-700">
         {socketError && (
           <div className="mb-2 rounded-lg bg-red-50 p-2 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">

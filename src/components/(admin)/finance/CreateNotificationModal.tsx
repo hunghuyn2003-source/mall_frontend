@@ -23,6 +23,9 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
   const [paymentDate, setPaymentDate] = useState<Dayjs | null>(
     dayjs().startOf("month"),
   );
+  const [expiredDate, setExpiredDate] = useState<Dayjs | null>(
+    dayjs().add(30, "days"),
+  );
 
   const createNotification = useCreatePaymentNotification();
 
@@ -38,15 +41,18 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
       await createNotification.mutateAsync({
         title,
         message,
-        paymentMonth: paymentDate.month() + 1, // dayjs month is 0-indexed
+        paymentMonth: paymentDate.month() + 1,
         paymentYear: paymentDate.year(),
+        expired:
+          expiredDate?.toISOString() || dayjs().add(30, "days").toISOString(),
       });
 
-      toast.success("Đã tạo thông báo và gửi đến tất cả STOREOWNER!");
+      toast.success("Đã gửi thông báo cho các chủ gian hàng!");
       // Reset form
       setTitle("");
       setMessage("");
       setPaymentDate(dayjs().startOf("month"));
+      setExpiredDate(dayjs().add(30, "days"));
       onClose();
     } catch (error: any) {
       toast.error(error.message || "Có lỗi xảy ra");
@@ -54,7 +60,7 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md ">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
       <div className="space-y-6">
         <h2 className="text-2xl font-normal">Tạo thông báo hóa đơn</h2>
 
@@ -76,6 +82,7 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
                 }}
               />
             </LocalizationProvider>
+
             <TextField
               label="Tiêu đề"
               value={title}
@@ -83,6 +90,20 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
               required
               fullWidth
             />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
+              <DatePicker
+                label="Ngày hết hạn thanh toán"
+                value={expiredDate}
+                onChange={(newValue) => setExpiredDate(newValue as Dayjs)}
+                slotProps={{
+                  popper: { sx: { zIndex: 9999999 } },
+                  textField: {
+                    fullWidth: true,
+                    required: true,
+                  },
+                }}
+              />
+            </LocalizationProvider>
             <TextField
               label="Nội dung"
               value={message}

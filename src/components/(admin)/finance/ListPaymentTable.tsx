@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetPayments } from "@/hooks/useFinance";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PAYMENT_STATUS_LABEL } from "@/helper/Label";
-import type { PaymentStatus } from "@/api/finance";
+import { PaymentStatus } from "@/type/finance";
 import { TextField, MenuItem } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";

@@ -26,4 +26,5 @@ export interface CreatePaymentNotificationDto {
   message: string;
   paymentMonth: number;
   paymentYear: number;
+  expired: string;
 }

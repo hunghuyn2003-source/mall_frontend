@@ -67,14 +67,14 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
     },
   });
 
-  // Get areas data for current floor
+
   const { data: areasData } = useQuery({
     queryKey: ["areas", currentFloor],
     queryFn: () => getAreasByFloor(currentFloor || 1),
     enabled: isOpen && currentFloor !== null,
   });
 
-  // Create areasMap
+
   const areasMap = useMemo<
     Map<number, { code: string; price: number; acreage: number }>
   >(() => {
@@ -141,11 +141,11 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
     }
   }, [selectedAreaId, areasMap, setValue, rentalDetail?.area?.id]);
 
-  // Clear selected area and restore original premisesFee when modal closes
+
   React.useEffect(() => {
     if (!isOpen) {
       setSelectedAreaId(null);
-      // Restore original premisesFee from rentalDetail
+
       if (rentalDetail?.premisesFee) {
         setValue("premisesFee", rentalDetail.premisesFee);
       }

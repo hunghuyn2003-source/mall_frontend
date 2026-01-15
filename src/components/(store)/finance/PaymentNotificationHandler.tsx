@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useFinanceSocket } from "@/hooks/useFinanceSocket";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -9,8 +9,8 @@ import { uploadImage } from "@/api/upload";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import type { PaymentStatus } from "@/api/finance";
-import { TextField, MenuItem, Button } from "@mui/material";
+import { PaymentStatus } from "@/type/finance";
+import { TextField, Button } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -44,19 +44,7 @@ export default function PaymentNotificationHandler() {
   const createPayment = useCreatePayment();
   const hasShownToastRef = useRef<string>("");
 
-  // Lấy phí mặt bằng và phí dịch vụ cho store hiện tại
-  const currentStoreFees = useMemo(() => {
-    if (!user?.rentalFees?.details || !store) return null;
-    const storeFee = user.rentalFees.details.find(
-      (detail) => detail.storeId === store.id,
-    );
-    if (!storeFee) return null;
-    return {
-      premisesFee: storeFee.premisesFee,
-      serviceFee: storeFee.serviceFee,
-      totalFee: storeFee.premisesFee + storeFee.serviceFee,
-    };
-  }, [user?.rentalFees, store]);
+  const rentalFees = user?.rentalFees;
 
   const uploadMutation = useMutation({
     mutationFn: (file: File) => uploadImage(file, "stores"),
@@ -67,36 +55,32 @@ export default function PaymentNotificationHandler() {
     },
   });
 
-  // Load notification from localStorage on mount
   useEffect(() => {
     const savedNotification = localStorage.getItem(STORAGE_KEY);
     if (savedNotification) {
       try {
         const parsed = JSON.parse(savedNotification) as PaymentNotification;
         setNotification(parsed);
-        setShowForm(false); // Hiển thị banner, không tự động mở form
+        setShowForm(false);
       } catch (error) {
-        console.error("Error parsing saved notification:", error);
         localStorage.removeItem(STORAGE_KEY);
       }
     }
   }, []);
 
-  // Auto fill số tiền thanh toán khi mở form
   useEffect(() => {
-    if (showForm && currentStoreFees) {
-      setAmount(currentStoreFees.totalFee);
+    if (showForm && rentalFees) {
+      setAmount(rentalFees.totalFee);
       setOwed(0);
       setStatus("PAID");
     }
-  }, [showForm, currentStoreFees]);
+  }, [showForm, rentalFees]);
 
-  // Tự động tính status và owed khi số tiền thanh toán thay đổi
   useEffect(() => {
-    if (!currentStoreFees || amount === "") return;
+    if (!rentalFees || amount === "") return;
 
     const paidAmount = Number(amount);
-    const totalFee = currentStoreFees.totalFee;
+    const totalFee = rentalFees.totalFee;
 
     if (paidAmount < totalFee) {
       setStatus("DEBIT");
@@ -105,23 +89,20 @@ export default function PaymentNotificationHandler() {
       setStatus("PAID");
       setOwed(0);
     }
-  }, [amount, currentStoreFees]);
+  }, [amount, rentalFees]);
 
   const handlePaymentNotification = useCallback(
-    (notification: PaymentNotification) => {
-      const notificationKey = `${notification.notificationId || ""}-${notification.createdAt}`;
+    (notificationData: PaymentNotification) => {
+      const notificationKey = `${notificationData.notificationId || ""}-${notificationData.createdAt}`;
 
       if (hasShownToastRef.current === notificationKey) {
         return;
       }
 
       hasShownToastRef.current = notificationKey;
-
-      // Lưu vào localStorage để persist khi refresh
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notification));
-
-      setNotification(notification);
-      setShowForm(false); // Hiển thị banner, không tự động mở form
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notificationData));
+      setNotification(notificationData);
+      setShowForm(false);
     },
     [],
   );
@@ -143,7 +124,7 @@ export default function PaymentNotificationHandler() {
       return;
     }
 
-    if (!currentStoreFees) {
+    if (!rentalFees) {
       toast.error("Không tìm thấy thông tin phí thuê");
       return;
     }
@@ -151,7 +132,6 @@ export default function PaymentNotificationHandler() {
     try {
       let imageUrl = "";
 
-      // Upload ảnh nếu có
       if (imageFile) {
         const uploadResult = await uploadMutation.mutateAsync(imageFile);
         imageUrl = uploadResult.url;
@@ -169,13 +149,9 @@ export default function PaymentNotificationHandler() {
       });
 
       toast.success("Thanh toán thành công!");
-
-      // Xóa notification và localStorage khi thành công
       localStorage.removeItem(STORAGE_KEY);
       setShowForm(false);
       setNotification(null);
-
-      // Reset form
       setAmount("");
       setOwed(0);
       setStatus("PAID");
@@ -214,7 +190,7 @@ export default function PaymentNotificationHandler() {
       )}
 
       {showForm && (
-        <div className="rounded-lg border border-blue-400 bg-white p-4 shadow-lg dark:bg-gray-800">
+        <div className="max-h-[80vh] overflow-y-auto rounded-lg border border-blue-400 bg-white p-4 shadow-lg dark:bg-gray-800">
           <div className="mb-4">
             <h3 className="text-lg font-semibold">
               Thanh toán hóa đơn tháng {notification.paymentMonth}/
@@ -222,30 +198,80 @@ export default function PaymentNotificationHandler() {
             </h3>
           </div>
 
+          {user?.stores && user.stores.length > 0 && (
+            <div className="mb-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+              <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Cửa hàng của bạn:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {user.stores.map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex items-center gap-2 rounded-full bg-white px-3 py-1 shadow-sm dark:bg-gray-600"
+                  >
+                    {s.avatar ? (
+                      <img
+                        src={s.avatar}
+                        alt={s.name}
+                        className="h-6 w-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
+                        {s.name.charAt(0)}
+                      </div>
+                    )}
+                    <span className="text-sm font-medium">{s.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex flex-col gap-4">
-              {currentStoreFees && (
-                <div className="flex flex-col gap-4">
-                  <TextField
-                    label="Phí mặt bằng (Không được thay đổi)"
-                    value={currentStoreFees.premisesFee.toLocaleString("vi-VN")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    size="small"
-                  />
-
-                  <TextField
-                    label="Phí dịch vụ (Không được thay đổi)"
-                    value={currentStoreFees.serviceFee.toLocaleString("vi-VN")}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    size="small"
-                  />
+            {rentalFees && (
+              <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-600">
+                <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                  Chi tiết phí theo cửa hàng:
+                </p>
+                <div className="space-y-2">
+                  {rentalFees.details.map((detail) => (
+                    <div
+                      key={detail.storeId}
+                      className="flex items-center justify-between rounded bg-gray-50 px-3 py-2 text-sm dark:bg-gray-700"
+                    >
+                      <span className="font-medium">{detail.storeName}</span>
+                      <span>
+                        {(
+                          detail.premisesFee + detail.serviceFee
+                        ).toLocaleString("vi-VN")}{" "}
+                        đ
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
-
+                <div className="mt-3 border-t border-gray-200 pt-3 dark:border-gray-600">
+                  <div className="flex justify-between text-sm">
+                    <span>Tổng phí mặt bằng:</span>
+                    <span className="font-medium">
+                      {rentalFees.totalPremisesFee.toLocaleString("vi-VN")} đ
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Tổng phí dịch vụ:</span>
+                    <span className="font-medium">
+                      {rentalFees.totalServiceFee.toLocaleString("vi-VN")} đ
+                    </span>
+                  </div>
+                  <div className="mt-2 flex justify-between border-t border-gray-200 pt-2 text-base font-semibold dark:border-gray-600">
+                    <span>Tổng cộng:</span>
+                    <span className="text-blue-600">
+                      {rentalFees.totalFee.toLocaleString("vi-VN")} đ
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="mb-5">
               <TextField
                 label="Số tiền thanh toán"
                 fullWidth
@@ -257,9 +283,10 @@ export default function PaymentNotificationHandler() {
                   setAmount(raw === "" ? "" : Number(raw));
                 }}
                 required
-                inputProps={{ min: 0 }}
+                size="small"
               />
-
+            </div>
+            <div className="mb-2">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Ngày thanh toán"
@@ -272,29 +299,31 @@ export default function PaymentNotificationHandler() {
                     textField: {
                       fullWidth: true,
                       required: true,
+                      size: "small",
                     },
                   }}
                 />
               </LocalizationProvider>
-              <div className="mb-4">
-                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Ảnh thanh toán
-                </label>
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700"
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Ảnh thanh toán
+              </label>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="h-32 w-full rounded-lg object-cover"
                   />
-                  {imagePreview && (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="h-32 w-full rounded-lg object-cover"
-                    />
-                  )}
-                </div>
+                )}
               </div>
             </div>
 
@@ -304,17 +333,13 @@ export default function PaymentNotificationHandler() {
               disabled={
                 createPayment.isPending ||
                 uploadMutation.isPending ||
-                !currentStoreFees
+                !rentalFees
               }
               fullWidth
               sx={{
                 backgroundColor: "#2563EB",
-                "&:hover": {
-                  backgroundColor: "#1D4ED8",
-                },
-                "&:disabled": {
-                  backgroundColor: "#9CA3AF",
-                },
+                "&:hover": { backgroundColor: "#1D4ED8" },
+                "&:disabled": { backgroundColor: "#9CA3AF" },
               }}
             >
               {createPayment.isPending || uploadMutation.isPending

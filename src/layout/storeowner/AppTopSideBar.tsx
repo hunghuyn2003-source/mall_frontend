@@ -14,6 +14,7 @@ import {
   MessageSquare,
   RefreshCw,
   Receipt,
+  CreditCard,
 } from "lucide-react";
 import { ROLE_LABEL } from "@/helper/Label";
 import { useState, useRef, useEffect } from "react";
@@ -42,7 +43,11 @@ const MENU_STOREOWNER = [
     name: "Lịch sử hóa đơn",
     path: "/store/history",
   },
-
+  {
+    icon: <CreditCard size={20} />,
+    name: "Lịch sử thanh toán",
+    path: "/store/finance",
+  },
   { icon: <MessageSquare size={20} />, name: "Chat", path: "/store/chat" },
 ];
 
