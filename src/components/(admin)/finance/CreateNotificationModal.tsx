@@ -82,7 +82,7 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
                 }}
               />
             </LocalizationProvider>
-
+            
             <TextField
               label="Tiêu đề"
               value={title}
@@ -90,7 +90,7 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
               required
               fullWidth
             />
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
               <DatePicker
                 label="Ngày hết hạn thanh toán"
                 value={expiredDate}
@@ -114,6 +114,7 @@ export default function CreateNotificationModal({ isOpen, onClose }: Props) {
               rows={4}
               placeholder="Vui lòng thanh toán tiền thuê tháng 12/2024"
             />
+          
           </div>
 
           <div className="flex justify-end gap-3">

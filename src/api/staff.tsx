@@ -31,3 +31,8 @@ export const updateStaff = async (id: number, payload: any) => {
   const res = await instance.patch(`/api/v1/staffs/${id}`, payload);
   return res.data;
 };
+
+export const deleteStaff = async (id: number) => {
+  const res = await instance.delete(`/api/v1/staffs/${id}`);
+  return res.data;
+};

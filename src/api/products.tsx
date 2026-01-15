@@ -32,6 +32,11 @@ export const updateProduct = async (id: number, payload: any) => {
   return res.data;
 };
 
+export const deleteProduct = async (id: number) => {
+  const res = await instance.delete(`/api/v1/products/${id}`);
+  return res.data;
+};
+
 // Product Category
 export const listProductCategories = async (params?: {
   page?: number;
