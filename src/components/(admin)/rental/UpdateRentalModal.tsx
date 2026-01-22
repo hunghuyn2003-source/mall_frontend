@@ -19,6 +19,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { toast } from "react-toastify";
+import PersonIcon from "@mui/icons-material/Person";
 import dayjs from "dayjs";
 import { RENTAL_STATUS_LABEL, STORE_TYPE_LABEL } from "@/helper/Label";
 import ComponentCard from "@/components/common/ComponentCard";
@@ -67,13 +68,11 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
     },
   });
 
-
   const { data: areasData } = useQuery({
     queryKey: ["areas", currentFloor],
     queryFn: () => getAreasByFloor(currentFloor || 1),
     enabled: isOpen && currentFloor !== null,
   });
-
 
   const areasMap = useMemo<
     Map<number, { code: string; price: number; acreage: number }>
@@ -131,7 +130,6 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
     }
   }, [rentalDetail, reset]);
 
-
   React.useEffect(() => {
     if (selectedAreaId !== null && selectedAreaId !== rentalDetail?.area?.id) {
       const area = areasMap.get(selectedAreaId);
@@ -140,7 +138,6 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
       }
     }
   }, [selectedAreaId, areasMap, setValue, rentalDetail?.area?.id]);
-
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -153,15 +150,13 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
   }, [isOpen, rentalDetail, setValue]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] ">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px]">
       <Typography variant="h6" mb={4}>
         Cập nhật hợp đồng
       </Typography>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Cột 1: Thông tin cửa hàng và hợp đồng */}
         <div className="space-y-6">
-          {/* Thông tin cửa hàng */}
           <ComponentCard title="Thông tin cửa hàng">
             <Box
               sx={{
@@ -213,18 +208,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                 </Typography>
 
                 <Typography variant="caption" color="text.secondary">
-                  Chủ sở hữu:{" "}
-                  <Typography
-                    component="span"
-                    variant="body1"
-                    sx={{ color: "text.primary", fontWeight: 500 }}
-                  >
-                    {rentalDetail?.owner?.name || "-"}
-                  </Typography>
-                </Typography>
-
-                <Typography variant="caption" color="text.secondary">
-                  Tên cửa hàng:{" "}
+                  Tên :{" "}
                   <Typography
                     component="span"
                     variant="body1"
@@ -235,13 +219,99 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                 </Typography>
 
                 <Typography variant="caption" color="text.secondary">
-                  Loại cửa hàng:{" "}
+                  Loại:{" "}
                   <Typography
                     component="span"
                     variant="body1"
                     sx={{ color: "text.primary", fontWeight: 500 }}
                   >
                     {STORE_TYPE_LABEL[rentalDetail?.store?.type] || "-"}
+                  </Typography>
+                </Typography>
+              </Box>
+            </Box>
+          </ComponentCard>
+
+          <ComponentCard title="Thông tin chủ sở hữu">
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "200px 1fr",
+                gap: 4,
+                alignItems: "flex-start",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 1.5,
+                }}
+              >
+                <Avatar
+                  src={rentalDetail?.store?.avatar || ""}
+                  alt={rentalDetail?.store?.name}
+                  sx={{
+                    width: 120,
+                    height: 120,
+                    bgcolor: "grey.500",
+                  }}
+                >
+                  {!rentalDetail?.store?.avatar && (
+                    <PersonIcon sx={{ fontSize: 64 }} />
+                  )}
+                </Avatar>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1.5,
+                }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  Tên:{" "}
+                  <Typography
+                    component="span"
+                    variant="body1"
+                    sx={{ color: "text.primary", fontWeight: 500 }}
+                  >
+                    {rentalDetail?.owner?.name || "-"}
+                  </Typography>
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Email:{" "}
+                  <Typography
+                    component="span"
+                    variant="body1"
+                    sx={{ color: "text.primary", fontWeight: 500 }}
+                  >
+                    {rentalDetail?.owner?.email || "-"}
+                  </Typography>
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Số điện thoại:{" "}
+                  <Typography
+                    component="span"
+                    variant="body1"
+                    sx={{ color: "text.primary", fontWeight: 500 }}
+                  >
+                    {rentalDetail?.owner?.phone || "-"}
+                  </Typography>
+                </Typography>
+
+                <Typography variant="caption" color="text.secondary">
+                  Ngày sinh:{" "}
+                  <Typography
+                    component="span"
+                    variant="body1"
+                    sx={{ color: "text.primary", fontWeight: 500 }}
+                  >
+                    {rentalDetail?.owner?.birth
+                      ? dayjs(rentalDetail.owner.birth).format("MM/DD/YYYY")
+                      : "-"}
                   </Typography>
                 </Typography>
               </Box>
@@ -264,6 +334,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                       rules={{ required: "Không được bỏ trống ngày bắt đầu" }}
                       render={({ field, fieldState }) => (
                         <DatePicker
+                          format="DD/MM/YYYY"
                           label="Ngày bắt đầu"
                           value={field.value ? dayjs(field.value) : null}
                           onChange={(value) =>
@@ -287,6 +358,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                       rules={{ required: "Không được bỏ trống ngày kết thúc" }}
                       render={({ field, fieldState }) => (
                         <DatePicker
+                          format="DD/MM/YYYY"
                           label="Ngày kết thúc"
                           value={field.value ? dayjs(field.value) : null}
                           onChange={(value) =>
@@ -304,60 +376,6 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                       )}
                     />
                   </LocalizationProvider>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Controller
-                    name="premisesFee"
-                    control={control}
-                    rules={{
-                      required: "Không được bỏ trống phí thuê",
-                      min: { value: 1, message: "Phí thuê phải lớn hơn 0" },
-                    }}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        label="Phí thuê mặt bằng"
-                        fullWidth
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message}
-                        value={
-                          field.value
-                            ? Number(field.value).toLocaleString("vi-VN")
-                            : ""
-                        }
-                        onChange={(e) => {
-                          const raw = e.target.value.replace(/\D/g, "");
-                          field.onChange(raw === "" ? "" : Number(raw));
-                        }}
-                      />
-                    )}
-                  />
-
-                  <Controller
-                    name="serviceFee"
-                    control={control}
-                    rules={{
-                      required: "Không được bỏ trống phí thuê",
-                      min: { value: 1, message: "Phí thuê phải lớn hơn 0" },
-                    }}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        label="Phí dịch vụ"
-                        fullWidth
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message}
-                        value={
-                          field.value
-                            ? Number(field.value).toLocaleString("vi-VN")
-                            : ""
-                        }
-                        onChange={(e) => {
-                          const raw = e.target.value.replace(/\D/g, "");
-                          field.onChange(raw === "" ? "" : Number(raw));
-                        }}
-                      />
-                    )}
-                  />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -381,15 +399,17 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                         }}
                       >
                         <MenuItem value="">Chọn trạng thái</MenuItem>
-                          {Object.entries(RENTAL_STATUS_LABEL).map(([key, config]) => (
-    <MenuItem key={key} value={key}>
-      <Chip
-        label={config.label}
-        color={config.color}
-        size="small"
-      />
-    </MenuItem>
-  ))}
+                        {Object.entries(RENTAL_STATUS_LABEL).map(
+                          ([key, config]) => (
+                            <MenuItem key={key} value={key}>
+                              <Chip
+                                label={config.label}
+                                color={config.color}
+                                size="small"
+                              />
+                            </MenuItem>
+                          ),
+                        )}
                       </TextField>
                     )}
                   />

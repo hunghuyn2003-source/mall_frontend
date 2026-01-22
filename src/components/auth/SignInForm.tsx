@@ -119,8 +119,7 @@ export default function SignInForm() {
                   onChange={(e) => setRole(e.target.value)}
                 >
                   <MenuItem value="ADMIN"> Ban quản lý</MenuItem>
-                  <MenuItem value="STOREOWNER">Chủ cửa hàng</MenuItem>
-                  <MenuItem value="STORESTAFF">Nhân viên cửa hàng</MenuItem>
+                  <MenuItem value="STOREOWNER">Chủ gian hàng</MenuItem>
                 </Select>
               </FormControl>
 

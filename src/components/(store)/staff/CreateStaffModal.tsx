@@ -77,7 +77,7 @@ export default function CreateStaffModal({ isOpen, onClose, storeId }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px]">
       <Typography variant="h6" mb={2}>
         Tạo tài khoản nhân viên
       </Typography>
@@ -201,6 +201,7 @@ export default function CreateStaffModal({ isOpen, onClose, storeId }: Props) {
             rules={{ required: "Không được bỏ trống ngày sinh" }}
             render={({ field, fieldState }) => (
               <DatePicker
+                format="DD/MM/YYYY"
                 label="Ngày sinh"
                 value={field.value}
                 onChange={(value) => field.onChange(value)}

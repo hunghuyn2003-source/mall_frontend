@@ -1,19 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  useAdminOverview,
-  useAdminRevenueByMonth,
-} from "@/hooks/useStatistical";
+import { useAdminOverview } from "@/hooks/useStatistical";
+import { useQuery } from "@tanstack/react-query";
+import { getAdminBalance } from "@/api/statistical";
 import ComponentCard from "@/components/common/ComponentCard";
 import { Store, Users, MapPin, FileText, DollarSign } from "lucide-react";
 import { TextField } from "@mui/material";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
+import { formatNumber } from "@/helper/format";
 
 export default function AdminOverview() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const { data, isLoading, error } = useAdminOverview();
-  const { data: revenueData } = useAdminRevenueByMonth(selectedYear);
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const { data: balanceData } = useQuery({
+    queryKey: ["admin-balance", user?.id],
+    queryFn: () => getAdminBalance(user!.id),
+    enabled: !!user?.id,
+  });
 
   if (isLoading) {
     return (
@@ -38,11 +46,12 @@ export default function AdminOverview() {
   const stats = [
     {
       label: "Tổng doanh thu",
-      value: revenueData?.totalRevenue || 0,
+      value: formatNumber(balanceData?.balance || 0),
+
       icon: <DollarSign className="h-6 w-6" />,
       color: "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
       isMoney: true,
-      year: revenueData?.year || selectedYear,
+      year: selectedYear,
     },
     {
       label: "Cửa hàng",
@@ -51,7 +60,7 @@ export default function AdminOverview() {
       color: "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
     },
     {
-      label: "Chủ cửa hàng",
+      label: "Chủ gian hàng",
       value: data?.totalStoreOwners || 0,
       icon: <Users className="h-6 w-6" />,
       color:

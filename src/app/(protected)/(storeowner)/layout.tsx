@@ -8,7 +8,6 @@ import AppTopSideBar from "@/layout/storeowner/AppTopSideBar";
 import PrivateRoute from "@/components/privateroute/PrivateRoute";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import PaymentNotificationHandler from "@/components/(store)/finance/PaymentNotificationHandler";
 
 export default function StoreLayout({
   children,
@@ -42,7 +41,6 @@ export default function StoreLayout({
         >
           {children}
         </div>
-        <PaymentNotificationHandler />
       </PrivateRoute>
     </div>
   );

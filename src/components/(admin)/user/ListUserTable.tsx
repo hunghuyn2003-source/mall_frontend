@@ -133,7 +133,7 @@ export default function ListUserTable({ onEdit }: Props) {
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {user.isActive ? "Hoạt động" : "Không hoạt động"}
+                      {user.isActive ? "Hoạt động" : "Đang khóa"}
                     </span>
                   </td>
                   <td className="px-5 py-3">

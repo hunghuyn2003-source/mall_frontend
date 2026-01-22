@@ -15,10 +15,7 @@ interface ChatSidebarProps {
   selectedConversationId: number | null;
 }
 
-export default function ChatSidebar({
-  onSelectUser,
-
-}: ChatSidebarProps) {
+export default function ChatSidebar({ onSelectUser }: ChatSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const currentUser = useSelector((state: RootState) => state.auth.user);
@@ -70,7 +67,7 @@ export default function ChatSidebar({
                 : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
           >
-            Chủ cửa hàng
+            Chủ gian hàng
           </button>
         </div>
       )}

@@ -11,12 +11,20 @@ import CreateStoreModal from "@/components/(admin)/store/CreateStoreModal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { ROLE_LABEL } from "@/helper/Label";
+import { useQuery } from "@tanstack/react-query";
+import { getAdminBalance } from "@/api/statistical";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const [openCreateStore, setOpenCreateStore] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
   const user = useSelector((state: RootState) => state.auth.user);
+
+  const { data: balanceData } = useQuery({
+    queryKey: ["admin-balance", user?.id],
+    queryFn: () => getAdminBalance(user!.id),
+    enabled: !!user?.id,
+  });
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -107,25 +115,16 @@ const AppHeader: React.FC = () => {
               />
             </Link>
 
-            <button
-              onClick={toggleApplicationMenu}
-              className="z-99999 flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden dark:text-gray-400 dark:hover:bg-gray-800"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M5.99902 10.4951C6.82745 10.4951 7.49902 11.1667 7.49902 11.9951V12.0051C7.49902 12.8335 6.82745 13.5051 5.99902 13.5051C5.1706 13.5051 4.49902 12.8335 4.49902 12.0051V11.9951C4.49902 11.1667 5.1706 10.4951 5.99902 10.4951ZM17.999 10.4951C18.8275 10.4951 19.499 11.1667 19.499 11.9951V12.0051C19.499 12.8335 18.8275 13.5051 17.999 13.5051C17.1706 13.5051 16.499 12.8335 16.499 12.0051V11.9951C16.499 11.1667 17.1706 10.4951 17.999 10.4951ZM13.499 11.9951C13.499 11.1667 12.8275 10.4951 11.999 10.4951C11.1706 10.4951 10.499 11.1667 10.499 11.9951V12.0051C10.499 12.8335 11.1706 13.5051 11.999 13.5051C12.8275 13.5051 13.499 12.8335 13.499 12.0051V11.9951Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </button>
+            {balanceData && (
+              <div className="rounded-lg bg-blue-50 px-4 py-2 dark:bg-blue-900">
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Số dư
+                </p>
+                <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                  {Number(balanceData.balance).toLocaleString("vi-VN")} ₫
+                </p>
+              </div>
+            )}
 
             <div>
               <div className="flex w-full justify-end px-3 py-2">

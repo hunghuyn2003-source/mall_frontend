@@ -1,5 +1,6 @@
 export interface CreateStore {
   ownerId: number;
+  adminId: number;
   areaId: number;
 
   name: string;
@@ -7,8 +8,10 @@ export interface CreateStore {
 
   startDate: string;
   endDate: string;
-  premisesFee: number;
+  rentalFee: number;
+  environmentFee: number;
+  securityFee: number;
 
-  serviceFee?: number;
   contractFile?: string;
+  agreeTerms: boolean;
 }

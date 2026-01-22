@@ -63,14 +63,20 @@ export default function CreateOwnerModal({
 
   const onSubmit: SubmitHandler<FormValues> = (values) => {
     const payload: CreateOwner = {
-      ...values,
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      phone: values.phone,
       birth: values.birth ? values.birth.toISOString() : "",
+      gender: values.gender,
+      address: values.address,
+      avatar: values.avatar,
     };
     mutation.mutate(payload);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px]">
       <Typography variant="h6" mb={2}>
         Tạo tài khoản chủ sở hữu
       </Typography>
@@ -194,6 +200,7 @@ export default function CreateOwnerModal({
             rules={{ required: "Không được bỏ trống ngày sinh" }}
             render={({ field, fieldState }) => (
               <DatePicker
+                format="DD/MM/YYYY"
                 label="Ngày sinh"
                 value={field.value}
                 onChange={(value) => field.onChange(value)}

@@ -80,14 +80,14 @@ export default function UpdateStaffModal({ isOpen, onClose, staff }: Props) {
 
   if (isLoading) {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
+      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px]">
         <div className="flex h-32 items-center justify-center">Loading...</div>
       </Modal>
     );
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px]">
       <Typography variant="h6" mb={2}>
         Cập nhật nhân viên
       </Typography>
@@ -136,6 +136,7 @@ export default function UpdateStaffModal({ isOpen, onClose, staff }: Props) {
             rules={{ required: "Không được bỏ trống ngày sinh" }}
             render={({ field, fieldState }) => (
               <DatePicker
+                format="DD/MM/YYYY"
                 label="Ngày sinh"
                 value={field.value}
                 onChange={(value) => field.onChange(value)}

@@ -13,7 +13,7 @@ import {
   Settings,
   Store,
   MapPin,
-  DollarSign,
+  Wrench,
 } from "lucide-react";
 
 type NavItem = {
@@ -39,15 +39,20 @@ const navItems: NavItem[] = [
     name: "Hợp đồng",
     path: "/rental",
   },
+  // {
+  //   icon: <Store size={20} />,
+  //   name: "Cửa hàng",
+  //   path: "/store",
+  // },
   {
-    icon: <Store size={20} />,
-    name: "Cửa hàng",
-    path: "/store",
+    icon: <Wrench size={20} />,
+    name: "Cơ sở vật chất",
+    path: "/facility",
   },
   {
-    icon: <DollarSign size={20} />,
-    name: "Tài chính",
-    path: "/finance",
+    icon: <Users size={20} />,
+    name: "Nhân sự",
+    path: "/staff",
   },
   {
     icon: <Users size={20} />,
@@ -198,11 +203,9 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-
   const isActive = useCallback((path: string) => path === pathname, [pathname]);
 
   useEffect(() => {
-
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
       const items = menuType === "main" ? navItems : othersItems;
@@ -227,7 +230,6 @@ const AppSidebar: React.FC = () => {
   }, [pathname, isActive]);
 
   useEffect(() => {
-
     if (openSubmenu !== null) {
       const key = `${openSubmenu.type}-${openSubmenu.index}`;
       if (subMenuRefs.current[key]) {

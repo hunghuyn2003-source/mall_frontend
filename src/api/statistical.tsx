@@ -1,7 +1,9 @@
 import instance from "@/utils/axios";
-import { RevenueByMonthResponse, AdminOverviewResponse, StoreOwnerOverviewResponse } from "@/type/statistical";
-
-
+import {
+  RevenueByMonthResponse,
+  AdminOverviewResponse,
+  StoreOwnerOverviewResponse,
+} from "@/type/statistical";
 
 export const getAdminRevenueByMonth = async (
   year?: number,
@@ -38,11 +40,13 @@ export const getStoreOwnerRevenueByMonth = async (
 export const getStoreOwnerOverview = async (
   storeId: number,
 ): Promise<StoreOwnerOverviewResponse> => {
-  const res = await instance.get(
-    "/api/v1/statistical/storeowner/overview",
-    {
-      params: { storeId },
-    },
-  );
+  const res = await instance.get("/api/v1/statistical/storeowner/overview", {
+    params: { storeId },
+  });
+  return res.data;
+};
+
+export const getAdminBalance = async (userId: number) => {
+  const res = await instance.get(`/api/v1/statistical/admin/balance`);
   return res.data;
 };

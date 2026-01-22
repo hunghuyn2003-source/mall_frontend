@@ -1,16 +1,11 @@
-export const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+import dayjs from "dayjs";
 
-    });
+export const formatDate = (dateStr?: string) => {
+  if (!dateStr) return "-";
+  return dayjs(dateStr).format("DD/MM/YYYY");
 };
-  
 
 export const formatNumber = (value: number | string) => {
   if (value === "" || value === null || value === undefined) return "";
   return Number(value).toLocaleString("vi-VN");
 };
-
-

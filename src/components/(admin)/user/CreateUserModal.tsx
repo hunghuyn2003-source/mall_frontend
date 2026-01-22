@@ -8,6 +8,9 @@ import { Modal } from "@/components/ui/modal";
 import { TextField, Button, MenuItem, Typography } from "@mui/material";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { toast } from "react-toastify";
 import { useState } from "react";
 
@@ -21,7 +24,8 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  type FormValues = CreateUser & {
+  type FormValues = Omit<CreateUser, "birth"> & {
+    birth: Date | null;
     confirmPassword: string;
   };
 
@@ -31,6 +35,9 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
       email: "",
       password: "",
       confirmPassword: "",
+      phone: "",
+      birth: null,
+      gender: "",
       role: "ADMIN",
       avatar: "",
     },
@@ -54,7 +61,11 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (values) => {
-    const { confirmPassword, ...payload } = values;
+    const { confirmPassword, ...rest } = values;
+    const payload: CreateUser = {
+      ...rest,
+      birth: values.birth ? values.birth.toISOString() : "",
+    };
     mutation.mutate(payload);
   };
 
@@ -64,7 +75,7 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] ">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px]">
       <Typography variant="h6" mb={2}>
         Tạo tài khoản mới
       </Typography>
@@ -175,6 +186,78 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
         />
 
         <Controller
+          name="phone"
+          control={control}
+          rules={{
+            required: "Không được bỏ trống số điện thoại",
+            pattern: {
+              value: /^[0-9]{10,}$/,
+              message: "Số điện thoại không hợp lệ",
+            },
+          }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              label="Số điện thoại"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+            />
+          )}
+        />
+
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Controller
+            name="birth"
+            control={control}
+            rules={{ required: "Không được bỏ trống ngày sinh" }}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                format="DD/MM/YYYY"
+                label="Ngày sinh"
+                value={field.value}
+                onChange={(value) => field.onChange(value)}
+                slotProps={{
+                  popper: { sx: { zIndex: 9999999 } },
+                  textField: {
+                    error: !!fieldState.error,
+                    helperText: fieldState.error?.message,
+                    fullWidth: true,
+                  },
+                }}
+              />
+            )}
+          />
+        </LocalizationProvider>
+
+        <Controller
+          name="gender"
+          control={control}
+          rules={{ required: "Vui lòng chọn giới tính" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              select
+              label="Giới tính"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              SelectProps={{
+                MenuProps: {
+                  sx: { zIndex: 999999 },
+                  PaperProps: { sx: { zIndex: 999999 } },
+                },
+              }}
+            >
+              <MenuItem value="">Chọn giới tính</MenuItem>
+              <MenuItem value="male">Nam</MenuItem>
+              <MenuItem value="female">Nữ</MenuItem>
+              <MenuItem value="other">Khác</MenuItem>
+            </TextField>
+          )}
+        />
+
+        <Controller
           name="role"
           control={control}
           rules={{ required: "Vui lòng chọn vai trò" }}
@@ -194,8 +277,7 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
               }}
             >
               <MenuItem value="ADMIN">Ban quản lý</MenuItem>
-              <MenuItem value="STOREOWNER">Chủ cửa hàng</MenuItem>
-              <MenuItem value="STORESTAFF">Nhân viên cửa hàng</MenuItem>
+              <MenuItem value="STOREOWNER">Chủ gian hàng</MenuItem>
             </TextField>
           )}
         />

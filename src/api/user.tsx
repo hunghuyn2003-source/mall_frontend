@@ -42,6 +42,22 @@ export const createOwner = async (payload: CreateOwner) => {
   return res.data;
 };
 
+export const listAdmin = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}) => {
+  const res = await instance.get("/api/v1/users/admin", {
+    params: {
+      page: params?.page ?? 1,
+      limit: params?.limit ?? 10,
+      search: params?.search,
+    },
+  });
+
+  return res.data;
+};
+
 export const updateUser = async (id: number, payload: any) => {
   const res = await instance.patch(`/api/v1/users/${id}`, payload);
   return res.data;

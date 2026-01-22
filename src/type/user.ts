@@ -33,14 +33,17 @@ export interface TUserStore {
   avatar: string | null;
   role: "OWNER" | "STAFF";
   position: string | null;
-  premisesFee?: number; 
-  serviceFee?: number; 
+  premisesFee?: number;
+  serviceFee?: number;
 }
 
 export interface CreateUser {
   name: string;
   email: string;
   password: string;
+  phone: string;
+  birth: string;
+  gender: string;
   role: string;
   avatar: string;
 }

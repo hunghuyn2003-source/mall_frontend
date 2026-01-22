@@ -82,7 +82,7 @@ export default function UpdateUserModal({ isOpen, onClose, user }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px] ">
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-[700px]">
       <Typography variant="h6" mb={2}>
         Cập nhật tài khoản
       </Typography>
@@ -147,8 +147,7 @@ export default function UpdateUserModal({ isOpen, onClose, user }: Props) {
               }}
             >
               <MenuItem value="ADMIN">Ban quản lý</MenuItem>
-              <MenuItem value="STOREOWNER">Chủ cửa hàng</MenuItem>
-              <MenuItem value="STORESTAFF">Nhân viên cửa hàng</MenuItem>
+              <MenuItem value="STOREOWNER">Chủ gian hàng</MenuItem>
             </TextField>
           )}
         />
@@ -171,8 +170,8 @@ export default function UpdateUserModal({ isOpen, onClose, user }: Props) {
                 },
               }}
             >
-              <MenuItem value="true">Hoạt động</MenuItem>
-              <MenuItem value="false">Không hoạt động</MenuItem>
+              <MenuItem value="true">Kích hoạt</MenuItem>
+              <MenuItem value="false">Khóa tài khoản</MenuItem>
             </TextField>
           )}
         />

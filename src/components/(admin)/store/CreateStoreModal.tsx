@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
-import { listOwner } from "@/api/user";
+import { listOwner, listAdmin } from "@/api/user";
 import { createStore } from "@/api/store";
 import { CreateStore } from "@/type/store";
 import { getAreasByFloor } from "@/api/location";
@@ -9,7 +9,14 @@ import { uploadImage } from "@/api/upload";
 import { User, Check } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { TextField, Button } from "@mui/material";
+import {
+  TextField,
+  Box,
+  FormControl,
+  FormHelperText,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -23,7 +30,6 @@ import Floor3Select from "./Floor3Select";
 import ComponentCard from "@/components/common/ComponentCard";
 import { ROLE_LABEL } from "@/helper/Label";
 import { MenuItem } from "@mui/material";
-
 
 interface Props {
   onClose: () => void;
@@ -53,14 +59,17 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
     useForm<CreateStore>({
       defaultValues: {
         ownerId: 0,
+        adminId: 0,
         areaId: 0,
         name: "",
         type: "",
         startDate: "",
         endDate: "",
-        premisesFee: 0,
-        serviceFee: 0,
+        rentalFee: 0,
+        environmentFee: 10000000,
+        securityFee: 15000000,
         contractFile: "",
+        agreeTerms: false,
       },
     });
 
@@ -73,6 +82,14 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
   });
   const owners = owner?.data || [];
   const meta = owner?.meta;
+
+  // Get admins data
+  const { data: adminData } = useQuery({
+    queryKey: ["admins"],
+    queryFn: () => listAdmin({ page: 1, limit: 100 }),
+    enabled: step === 2,
+  });
+  const admins = adminData?.data || [];
 
   // Get areas data for current floor
   const { data: areasData } = useQuery({
@@ -129,10 +146,14 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
 
   const canGoToStep2 = formData.ownerId > 0;
   const canGoToStep3 =
+    formData.adminId > 0 &&
     formData.areaId > 0 &&
     formData.startDate !== "" &&
     formData.endDate !== "" &&
-    formData.premisesFee > 0;
+    formData.rentalFee > 0 &&
+    formData.environmentFee >= 0 &&
+    formData.securityFee >= 0 &&
+    !!formData.agreeTerms;
   const canSubmit = formData.name !== "" && formData.type !== "";
 
   const handleNext = () => {
@@ -152,33 +173,41 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
     if (!canSubmit) return;
 
     try {
-      // Upload avatar first if exists
       let avatarUrl = "";
       if (avatarFile) {
         const uploadResult = await uploadMutation.mutateAsync(avatarFile);
         avatarUrl = uploadResult.url;
       }
 
-      // Create store with avatar URL
       mutation.mutate({
         ...data,
         avatar: avatarUrl,
       } as any);
-    } catch (error) {
-      // Error already handled in uploadMutation
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     if (selectedArea !== null) {
       setValue("areaId", selectedArea);
-      // Auto-fill premisesFee with area price
+
       const area = areasMap.get(selectedArea);
-      if (area) {
-        setValue("premisesFee", area.price);
+      if (!area) return;
+
+      if (formData.startDate && formData.endDate) {
+        const start = dayjs(formData.startDate);
+        const end = dayjs(formData.endDate);
+        if (end.isBefore(start)) {
+          setValue("rentalFee", area.price);
+          return;
+        }
+
+        const months = end.diff(start, "month");
+        setValue("rentalFee", area.price * months);
+      } else {
+        setValue("rentalFee", area.price);
       }
     }
-  }, [selectedArea, setValue, areasMap]);
+  }, [selectedArea, setValue, areasMap, formData.startDate, formData.endDate]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -210,7 +239,7 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] ">
+      <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px]">
         <div>
           <h2 className="mb-8 text-2xl font-normal text-gray-800 dark:text-white">
             Tạo cửa hàng
@@ -380,7 +409,50 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
             {/* STEP 2 */}
             {step === 2 && (
               <div className="space-y-4">
-                <ComponentCard title="Hợp đồng">
+                <ComponentCard title="Người cho thuê">
+                  <Controller
+                    name="adminId"
+                    control={control}
+                    rules={{ required: "Vui lòng chọn admin quản lý" }}
+                    render={({ field, fieldState }) => (
+                      <TextField
+                        {...field}
+                        select
+                        fullWidth
+                        error={!!fieldState.error}
+                        helperText={fieldState.error?.message}
+                        SelectProps={{
+                          displayEmpty: true,
+                          renderValue: (selected) => {
+                            if (!selected) {
+                              return (
+                                <span style={{ color: "#999" }}>
+                                  Chọn quản lý
+                                </span>
+                              );
+                            }
+                            const admin = admins.find(
+                              (a: any) => a.id === selected,
+                            );
+                            return admin?.name || "";
+                          },
+                          MenuProps: {
+                            sx: { zIndex: 9999999 },
+                            PaperProps: { sx: { zIndex: 9999999 } },
+                          },
+                        }}
+                      >
+                        {admins.map((admin: any) => (
+                          <MenuItem key={admin.id} value={admin.id}>
+                            {admin.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                  />
+                </ComponentCard>
+
+                <ComponentCard title="Ngày gia hạn">
                   <div className="space-y-3 rounded-xl">
                     <div className="flex gap-4">
                       <Controller
@@ -429,49 +501,73 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                         )}
                       />
                     </div>
-                    <div className="flex gap-4">
-                      <Controller
-                        name="premisesFee"
-                        control={control}
-                        rules={{ required: true, min: 1 }}
-                        render={({ field }) => (
-                          <TextField
-                            label="Số tiền thuê"
-                            fullWidth
-                            value={
-                              field.value
-                                ? Number(field.value).toLocaleString("vi-VN")
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const raw = e.target.value.replace(/\D/g, "");
-                              field.onChange(raw === "" ? "" : Number(raw));
-                            }}
-                          />
-                        )}
-                      />
+                  </div>
+                </ComponentCard>
 
-                      <Controller
-                        name="serviceFee"
-                        control={control}
-                        rules={{ required: true, min: 1 }}
-                        render={({ field }) => (
-                          <TextField
-                            label="Phí dịch vụ (tùy chọn)"
-                            fullWidth
-                            value={
-                              field.value
-                                ? Number(field.value).toLocaleString("vi-VN")
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const raw = e.target.value.replace(/\D/g, "");
-                              field.onChange(raw === "" ? "" : Number(raw));
-                            }}
-                          />
-                        )}
-                      />
-                    </div>
+                <ComponentCard title="Khoản phí dịch vụ">
+                  <div className="flex gap-4">
+                    <Controller
+                      name="rentalFee"
+                      control={control}
+                      rules={{ required: true, min: 1 }}
+                      render={({ field }) => (
+                        <TextField
+                          label="Phí thuê mặt bằng"
+                          fullWidth
+                          value={
+                            field.value
+                              ? Number(field.value).toLocaleString("vi-VN")
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/\D/g, "");
+                            field.onChange(raw === "" ? "" : Number(raw));
+                          }}
+                        />
+                      )}
+                    />
+
+                    <Controller
+                      name="environmentFee"
+                      control={control}
+                      rules={{ required: true, min: 0 }}
+                      render={({ field }) => (
+                        <TextField
+                          label="Phí môi trường"
+                          fullWidth
+                          value={
+                            field.value
+                              ? Number(field.value).toLocaleString("vi-VN")
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/\D/g, "");
+                            field.onChange(raw === "" ? "0" : Number(raw));
+                          }}
+                        />
+                      )}
+                    />
+
+                    <Controller
+                      name="securityFee"
+                      control={control}
+                      rules={{ required: true, min: 0 }}
+                      render={({ field }) => (
+                        <TextField
+                          label="Phí an ninh"
+                          fullWidth
+                          value={
+                            field.value
+                              ? Number(field.value).toLocaleString("vi-VN")
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/\D/g, "");
+                            field.onChange(raw === "" ? "0" : Number(raw));
+                          }}
+                        />
+                      )}
+                    />
                   </div>
                 </ComponentCard>
 
@@ -509,6 +605,75 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                       onAreaSelect={setSelectedArea}
                     />
                   )}
+                </ComponentCard>
+                <ComponentCard title="Điều khoản hợp đồng">
+                  <Controller
+                    name="agreeTerms"
+                    control={control}
+                    rules={{
+                      required: "Vui lòng đồng ý với điều khoản hợp đồng",
+                    }}
+                    render={({ field, fieldState }) => (
+                      <>
+                        <Box
+                          sx={{
+                            maxHeight: 200,
+                            overflowY: "auto",
+                            border: "1px solid #e0e0e0",
+                            borderRadius: 1,
+                            p: 2,
+                            mb: 1,
+                            fontSize: 14,
+                          }}
+                        >
+                          <p>
+                            <strong>1. Thời hạn thuê</strong>
+                            <br />
+                            Thời hạn thuê được tính từ ngày bàn giao mặt bằng
+                            hoặc ngày khai trương chính thức, tùy theo thời điểm
+                            nào đến trước.
+                          </p>
+
+                          <p>
+                            <strong>2. Tiền thuê và các khoản phí</strong>
+                            <br />
+                            Bên thuê có trách nhiệm thanh toán đầy đủ tiền thuê,
+                            phí dịch vụ, phí điện nước và các chi phí phát sinh
+                            khác theo quy định của Ban quản lý Trung tâm thương
+                            mại.
+                          </p>
+
+                          <p>
+                            <strong>3. Nghĩa vụ của bên thuê</strong>
+                            <br />
+                            Sử dụng mặt bằng đúng mục đích kinh doanh, tuân thủ
+                            nội quy và các quy định về phòng cháy chữa cháy, an
+                            ninh trật tự.
+                          </p>
+
+                          <p>
+                            <strong>4. Chấm dứt hợp đồng</strong>
+                            <br />
+                            Hợp đồng có thể bị chấm dứt trước thời hạn nếu một
+                            trong hai bên vi phạm nghiêm trọng các điều khoản đã
+                            cam kết.
+                          </p>
+                        </Box>
+
+                        <FormControl error={!!fieldState.error}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox {...field} checked={!!field.value} />
+                            }
+                            label="Tôi đã đọc và đồng ý với các điều khoản hợp đồng"
+                          />
+                          <FormHelperText>
+                            {fieldState.error?.message}
+                          </FormHelperText>
+                        </FormControl>
+                      </>
+                    )}
+                  />
                 </ComponentCard>
               </div>
             )}
