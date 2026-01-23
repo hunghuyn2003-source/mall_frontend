@@ -29,3 +29,16 @@ export const payInvoice = async (storeId: number, invoiceId: number) => {
   );
   return res.data;
 };
+
+export const createStoreInvoice = async (payload: {
+  storeId: number;
+  monthYear: string;
+  contractFee?: number;
+  electricityFee?: number;
+  waterFee?: number;
+  dueDate?: string;
+  note?: string;
+}) => {
+  const res = await instance.post("/api/v1/store-owner/invoices", payload);
+  return res.data;
+};

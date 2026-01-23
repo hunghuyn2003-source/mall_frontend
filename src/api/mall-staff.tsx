@@ -33,10 +33,14 @@ export const deleteMallStaff = async (id: number) => {
   return res.data;
 };
 
-export const salarySalementment = async () => {
-  const res = await instance.post("/api/v1/admin/mall-staff/salary-settlement");
+export const salarySettlement = async (note: string, staffIds: number[]) => {
+  const res = await instance.post("/api/v1/admin/mall-staff/salary-settlement", {
+    note,
+    staffIds,
+  });
   return res.data;
 };
+
 
 export const getTotalSalaryInfo = async () => {
   const res = await instance.get(

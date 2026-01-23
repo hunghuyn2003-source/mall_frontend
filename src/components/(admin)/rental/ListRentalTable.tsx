@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listRental } from "@/api/rental";
-import { ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, FileText } from "lucide-react";
 import { RENTAL_STATUS_LABEL } from "@/helper/Label";
 import { formatDate } from "@/helper/format";
 import { Chip } from "@mui/material";
+import CreateInvoiceModal from "./CreateInvoiceModal";
+
 interface Props {
   onEdit: (rental: any) => void;
 }
@@ -16,6 +18,15 @@ export default function ListRentalTable({ onEdit }: Props) {
   const limit = 10;
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [invoiceModal, setInvoiceModal] = useState<{
+    isOpen: boolean;
+    storeId: number | null;
+    storeName: string;
+  }>({
+    isOpen: false,
+    storeId: null,
+    storeName: "",
+  });
 
   const { data: rentalData } = useQuery({
     queryKey: ["rentals", page, debouncedSearch],
@@ -62,13 +73,13 @@ export default function ListRentalTable({ onEdit }: Props) {
                   <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Cửa hàng
                   </th>
-                   <th className="px-5 py-3 text-start font-medium text-gray-500">
+                  <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Chủ sở hữu
                   </th>
-                   <th className="px-5 py-3 text-start font-medium text-gray-500">
+                  <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Ngày đăng ký
                   </th>
-                    <th className="px-5 py-3 text-start font-medium text-gray-500">
+                  <th className="px-5 py-3 text-start font-medium text-gray-500">
                     Ngày hết hạn
                   </th>
 
@@ -91,47 +102,65 @@ export default function ListRentalTable({ onEdit }: Props) {
                       {rental.code || "___"}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-                      {rental.area?.floor?.level != null
-                ? `Tầng ${rental.area.floor.level} -`
-                : ""} {rental.area?.code || "___"} 
+                {rental.area?.code || "___"}{" "}
+{rental.area?.floor?.level != null
+  ? `| Tầng ${rental.area.floor.level}`
+  : ""}
+
                     </td>
-                      <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                    <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.store?.name || "___"}
                     </td>
                     <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
                       {rental.owner?.name || "___"}
                     </td>
-                  <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-  {formatDate(rental.startDate)}
-</td>
-<td className="text-md px-5 py-3 text-gray-800 dark:text-white">
-  {formatDate(rental.endDate)}
-</td>
+                    <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                      {formatDate(rental.startDate)}
+                    </td>
+                    <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                      {formatDate(rental.endDate)}
+                    </td>
 
                     
-                   <td className="text-md px-5 py-3">
-  {RENTAL_STATUS_LABEL[rental.status] ? (
-    <Chip
-      label={RENTAL_STATUS_LABEL[rental.status].label}
-      color={RENTAL_STATUS_LABEL[rental.status].color}
-      size="small"
-      variant="filled"
-    />
-  ) : (
-    <span className="text-gray-400">___</span>
-  )}
-</td>
+                    <td className="text-md px-5 py-3">
+                      {RENTAL_STATUS_LABEL[rental.status] ? (
+                        <Chip
+                          label={RENTAL_STATUS_LABEL[rental.status].label}
+                          color={RENTAL_STATUS_LABEL[rental.status].color}
+                          size="small"
+                          variant="filled"
+                        />
+                      ) : (
+                        <span className="text-gray-400">___</span>
+                      )}
+                    </td>
 
                     <td className="px-5 py-3">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(rental);
-                        }}
-                        className="flex items-center gap-1 rounded bg-blue-600 px-1 py-1 text-xs text-white hover:bg-blue-700"
-                      >
-                        <Edit size={14} />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(rental);
+                          }}
+                          className="flex items-center gap-1 rounded bg-blue-600 px-1 py-1 text-xs text-white hover:bg-blue-700"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInvoiceModal({
+                              isOpen: true,
+                              storeId: rental.store?.id || null,
+                              storeName: rental.store?.name || "",
+                            });
+                          }}
+                          className="flex items-center gap-1 rounded bg-green-600 px-1 py-1 text-xs text-white hover:bg-green-700"
+                          title="Tạo hóa đơn"
+                        >
+                          <FileText size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -160,6 +189,17 @@ export default function ListRentalTable({ onEdit }: Props) {
           <ChevronRight size={16} />
         </button>
       </div>
+
+      {invoiceModal.isOpen && invoiceModal.storeId && (
+        <CreateInvoiceModal
+          isOpen={invoiceModal.isOpen}
+          onClose={() =>
+            setInvoiceModal({ isOpen: false, storeId: null, storeName: "" })
+          }
+          storeId={invoiceModal.storeId}
+          storeName={invoiceModal.storeName}
+        />
+      )}
     </div>
   );
 }

@@ -50,3 +50,16 @@ export const getAdminBalance = async (userId: number) => {
   const res = await instance.get(`/api/v1/statistical/admin/balance`);
   return res.data;
 };
+
+export const getAdminPaymentHistory = async (params?: {
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await instance.get("/api/v1/statistical/admin/payment-history", {
+    params: {
+      page: params?.page ?? 1,
+      limit: params?.limit ?? 10,
+    },
+  });
+  return res.data;
+};

@@ -91,11 +91,12 @@ export default function Location() {
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {stores.map((store: any) => (
-                    <div
-                      key={store.id}
-                      className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white p-2"
-                    >
-                      <span className="w-8 pl-2 text-sm font-semibold text-gray-700">
+                  <div
+  key={store.id}
+className="flex w-full items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3"
+>
+
+                      <span className="w-14 pl-2 text-sm font-semibold text-gray-700">
                         {store.rentals?.[0]?.area?.code || "N/A"}
                       </span>
                       {store.avatar ? (

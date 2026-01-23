@@ -31,12 +31,12 @@ const navItems: NavItem[] = [
   },
   {
     icon: <MapPin size={20} />,
-    name: "Mặt bằng",
+    name: "Mặt bằng thuê",
     path: "/location",
   },
   {
     icon: <Calendar size={20} />,
-    name: "Hợp đồng",
+    name: "Hợp đồng cửa hàng",
     path: "/rental",
   },
   // {

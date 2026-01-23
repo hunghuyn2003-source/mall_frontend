@@ -37,15 +37,16 @@ const MENU_STOREOWNER = [
   },
   { icon: <Package size={20} />, name: "Sản phẩm", path: "/store/product" },
   { icon: <Users size={20} />, name: "Nhân viên", path: "/store/staff" },
-  {
-    icon: <Receipt size={20} />,
-    name: "Hóa đơn",
-    path: "/store/invoices",
-  },
+
   {
     icon: <Receipt size={20} />,
     name: "Lịch sử hóa đơn",
     path: "/store/history",
+  },
+    {
+    icon: <Receipt size={20} />,
+    name: "Nghĩa vụ thanh toán",
+    path: "/store/paymentObligation",
   },
   { icon: <MessageSquare size={20} />, name: "Chat", path: "/store/chat" },
 ];

@@ -6,7 +6,7 @@ import { listFacilities, deleteFacility } from "@/api/facility";
 import ComponentCard from "@/components/common/ComponentCard";
 import CreateFacilityModal from "@/components/(admin)/facility/CreateFacilityModal";
 import EditFacilityModal from "@/components/(admin)/facility/EditFacilityModal";
-import { Trash2, Edit, Plus } from "lucide-react";
+import { Trash2, Edit, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "react-toastify";
 
 export default function FacilityPage() {
@@ -61,84 +61,102 @@ export default function FacilityPage() {
             Không có cơ sở vật chất nào
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-gray-200 dark:border-gray-700">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium">Tên</th>
-                  <th className="px-4 py-3 text-left font-medium">Khu vực</th>
-                  <th className="px-4 py-3 text-left font-medium">Giá</th>
-                  <th className="px-4 py-3 text-left font-medium">
-                    Trạng thái
-                  </th>
-                  <th className="px-4 py-3 text-left font-medium">Ghi chú</th>
-                  <th className="px-4 py-3 text-center font-medium">
-                    Hành động
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {facilities.map((facility: any) => (
-                  <tr
-                    key={facility.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
-                    <td className="px-4 py-3">{facility.name}</td>
-                    <td className="px-4 py-3">
-                      {facility.area?.code} (Tầng {facility.area?.floor?.level})
-                    </td>
-                    <td className="px-4 py-3">
-                      {Number(facility.price).toLocaleString("vi-VN")} ₫
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`rounded-full px-3 py-1 text-sm ${
-                          facility.status === "ACTIVE"
-                            ? "bg-green-100 text-green-700"
-                            : facility.status === "MAINTENANCE"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                        }`}
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/5 dark:bg-white/3">
+            <div className="max-w-full overflow-x-auto">
+              <div className="min-w-[800px]">
+                <table className="w-full">
+                  <thead className="border-b border-gray-100 dark:border-white/5">
+                    <tr>
+                      <th className="px-5 py-3 text-start font-medium text-gray-500">
+                        Tên
+                      </th>
+                      <th className="px-5 py-3 text-start font-medium text-gray-500">
+                        Khu vực
+                      </th>
+                      <th className="px-5 py-3 text-start font-medium text-gray-500">
+                        Giá
+                      </th>
+                      <th className="px-5 py-3 text-start font-medium text-gray-500">
+                        Trạng thái
+                      </th>
+                      <th className="px-5 py-3 text-start font-medium text-gray-500">
+                        Ghi chú
+                      </th>
+                      <th className="px-5 py-3 text-start font-medium text-gray-500">
+                        Thao tác
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                    {facilities.map((facility: any) => (
+                      <tr
+                        key={facility.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
-                        {facility.status === "ACTIVE"
-                          ? "Hoạt động"
-                          : facility.status === "MAINTENANCE"
-                            ? "Bảo trì"
-                            : "Hư hỏng"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">{facility.note || "—"}</td>
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => setEditingFacility(facility)}
-                        className="inline-flex items-center gap-1 rounded px-2 py-1 text-blue-600 hover:bg-blue-100"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(facility.id)}
-                        className="ml-2 inline-flex items-center gap-1 rounded px-2 py-1 text-red-600 hover:bg-red-100"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                          {facility.name}
+                        </td>
+                        <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                          {facility.area?.code} (Tầng {facility.area?.floor?.level})
+                        </td>
+                        <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                          {Number(facility.price).toLocaleString("vi-VN")} đ
+                        </td>
+                        <td className="px-5 py-3">
+                          <span
+                            className={`rounded-full px-3 py-1 text-sm ${
+                              facility.status === "ACTIVE"
+                                ? "bg-green-100 text-green-700"
+                                : facility.status === "MAINTENANCE"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {facility.status === "ACTIVE"
+                              ? "Hoạt động"
+                              : facility.status === "MAINTENANCE"
+                                ? "Bảo trì"
+                                : "Hư hỏng"}
+                          </span>
+                        </td>
+                        <td className="text-md px-5 py-3 text-gray-800 dark:text-white">
+                          {facility.note || "___"}
+                        </td>
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setEditingFacility(facility)}
+                              className="flex items-center gap-1 rounded bg-blue-600 px-1 py-1 text-xs text-white hover:bg-blue-700"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(facility.id)}
+                              className="flex items-center gap-1 rounded bg-red-600 px-1 py-1 text-xs text-white hover:bg-red-700"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
         {meta && (
-          <div className="mt-4 flex items-center justify-center gap-3">
+          <div className="mt-4 flex items-center justify-end gap-3">
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               className="rounded bg-gray-200 px-3 py-1 disabled:opacity-50"
             >
-              Trước
+              <ChevronLeft size={16} />
             </button>
-            <span className="text-sm">
+            <span className="text-md text-gray-600">
               Trang {meta.page} / {meta.totalPages}
             </span>
             <button
@@ -146,7 +164,7 @@ export default function FacilityPage() {
               onClick={() => setPage((p) => p + 1)}
               className="rounded bg-gray-200 px-3 py-1 disabled:opacity-50"
             >
-              Sau
+              <ChevronRight size={16} />
             </button>
           </div>
         )}

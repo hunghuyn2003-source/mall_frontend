@@ -250,8 +250,7 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                 }}
               >
                 <Avatar
-                  src={rentalDetail?.store?.avatar || ""}
-                  alt={rentalDetail?.store?.name}
+
                   sx={{
                     width: 120,
                     height: 120,
@@ -337,9 +336,13 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                           format="DD/MM/YYYY"
                           label="Ngày bắt đầu"
                           value={field.value ? dayjs(field.value) : null}
-                          onChange={(value) =>
-                            field.onChange(value ? value.toISOString() : "")
-                          }
+                          onChange={(value) => {
+                                                            if (dayjs.isDayjs(value) && value.isValid()) {
+                                                           field.onChange(value.toISOString())
+                                                          } else {
+                                                           field.onChange("")
+                                                          }
+                                                        }}
                           slotProps={{
                             popper: { sx: { zIndex: 9999999 } },
                             textField: {
@@ -361,9 +364,13 @@ export default function UpdateRentalModal({ isOpen, onClose, rental }: Props) {
                           format="DD/MM/YYYY"
                           label="Ngày kết thúc"
                           value={field.value ? dayjs(field.value) : null}
-                          onChange={(value) =>
-                            field.onChange(value ? value.toISOString() : "")
-                          }
+                         onChange={(value) => {
+                                                           if (dayjs.isDayjs(value) && value.isValid()) {
+                                                          field.onChange(value.toISOString())
+                                                         } else {
+                                                          field.onChange("")
+                                                         }
+                                                       }}
                           slotProps={{
                             popper: { sx: { zIndex: 9999999 } },
                             textField: {

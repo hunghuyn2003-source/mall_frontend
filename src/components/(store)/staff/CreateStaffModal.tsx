@@ -201,7 +201,7 @@ export default function CreateStaffModal({ isOpen, onClose, storeId }: Props) {
             rules={{ required: "Không được bỏ trống ngày sinh" }}
             render={({ field, fieldState }) => (
               <DatePicker
-                format="DD/MM/YYYY"
+                format="dd/MM/yyyy"
                 label="Ngày sinh"
                 value={field.value}
                 onChange={(value) => field.onChange(value)}

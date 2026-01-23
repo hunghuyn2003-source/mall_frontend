@@ -83,7 +83,6 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
   const owners = owner?.data || [];
   const meta = owner?.meta;
 
-  // Get admins data
   const { data: adminData } = useQuery({
     queryKey: ["admins"],
     queryFn: () => listAdmin({ page: 1, limit: 100 }),
@@ -91,14 +90,12 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
   });
   const admins = adminData?.data || [];
 
-  // Get areas data for current floor
   const { data: areasData } = useQuery({
     queryKey: ["areas", currentFloor],
     queryFn: () => getAreasByFloor(currentFloor),
-    enabled: step === 2, // Only fetch when on step 2
+    enabled: step === 2,
   });
 
-  // Create areasMap
   const areasMap = useMemo<
     Map<number, { code: string; price: number; acreage: number }>
   >(() => {
@@ -464,9 +461,14 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                             <DesktopDatePicker
                               label="Ngày bắt đầu"
                               value={field.value ? dayjs(field.value) : null}
-                              onChange={(value) =>
-                                field.onChange(value ? value.toISOString() : "")
-                              }
+                             onChange={(value) => {
+                                  if (dayjs.isDayjs(value) && value.isValid()) {
+                                 field.onChange(value.toISOString())
+                                } else {
+                                 field.onChange("")
+                                }
+                              }}
+
                               slotProps={{
                                 popper: { sx: { zIndex: 9999999 } },
                                 textField: {
@@ -487,9 +489,13 @@ export default function CreateStoreModal({ onClose, isOpen }: Props) {
                             <DesktopDatePicker
                               label="Ngày kết thúc"
                               value={field.value ? dayjs(field.value) : null}
-                              onChange={(value) =>
-                                field.onChange(value ? value.toISOString() : "")
-                              }
+                                onChange={(value) => {
+                                  if (dayjs.isDayjs(value) && value.isValid()) {
+                                 field.onChange(value.toISOString())
+                                } else {
+                                 field.onChange("")
+                                }
+                              }}
                               slotProps={{
                                 popper: { sx: { zIndex: 9999999 } },
                                 textField: {

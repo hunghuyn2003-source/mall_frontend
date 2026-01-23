@@ -22,12 +22,13 @@ export default function EditMallStaffModal({ staff, isOpen, onClose }: Props) {
   const queryClient = useQueryClient();
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
+      name: "",
       position: "",
       email: "",
       phone: "",
       salary: 0,
       birth: "",
-      gender: "Male",
+      gender: "MALE",
       isActive: "true",
     },
   });
@@ -35,12 +36,13 @@ export default function EditMallStaffModal({ staff, isOpen, onClose }: Props) {
   React.useEffect(() => {
     if (isOpen && staff) {
       reset({
+        name: staff.name || "",
         position: staff.position || "",
         email: staff.email || "",
         phone: staff.phone || "",
         salary: staff.salary || 0,
         birth: staff.birth || "",
-        gender: staff.gender || "Male",
+        gender: staff.gender || "MALE",
         isActive: staff.isActive ? "true" : "false",
       });
     }
@@ -75,6 +77,14 @@ export default function EditMallStaffModal({ staff, isOpen, onClose }: Props) {
         onSubmit={handleSubmit(onSubmit)}
         className="row-3 flex flex-col gap-4 space-y-4"
       >
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} label="Tên" fullWidth />
+          )}
+        />
+
         <Controller
           name="position"
           control={control}
@@ -143,8 +153,8 @@ export default function EditMallStaffModal({ staff, isOpen, onClose }: Props) {
                 },
               }}
             >
-              <MenuItem value="Male">Nam</MenuItem>
-              <MenuItem value="Female">Nữ</MenuItem>
+              <MenuItem value="MALE">Nam</MenuItem>
+              <MenuItem value="FEMALE">Nữ</MenuItem>
             </TextField>
           )}
         />

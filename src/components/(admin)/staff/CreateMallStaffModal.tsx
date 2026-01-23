@@ -21,12 +21,13 @@ export default function CreateMallStaffModal({ isOpen, onClose }: Props) {
   const queryClient = useQueryClient();
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
+      name: "",
       position: "",
       email: "",
       phone: "",
       salary: 0,
       birth: "",
-      gender: "Male",
+      gender: "MALE",
     },
   });
 
@@ -56,6 +57,21 @@ export default function CreateMallStaffModal({ isOpen, onClose }: Props) {
         onSubmit={handleSubmit(onSubmit)}
         className="row-3 flex flex-col gap-4 space-y-4"
       >
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: "Tên là bắt buộc" }}
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              label="Tên"
+              fullWidth
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
+
         <Controller
           name="position"
           control={control}
@@ -159,8 +175,8 @@ export default function CreateMallStaffModal({ isOpen, onClose }: Props) {
                 },
               }}
             >
-              <MenuItem value="Male">Nam</MenuItem>
-              <MenuItem value="Female">Nữ</MenuItem>
+              <MenuItem value="MALE">Nam</MenuItem>
+              <MenuItem value="FEMALE">Nữ</MenuItem>
             </TextField>
           )}
         />
